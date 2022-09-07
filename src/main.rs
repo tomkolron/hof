@@ -21,7 +21,7 @@ async fn main() -> Result<(), reqwest::Error> {
         .text()
         .await?;
     
-    let json: serde_json::Value = serde_json::from_str(&res).expect("error");
+    let json: serde_json::Value = serde_json::from_str(&res).expect("couldn't decode response to json");
     let scopes = &json["data"]["team"]["in_scope_assets"]["edges"];
 
     for i in scopes.as_array().unwrap() {
