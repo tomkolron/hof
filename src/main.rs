@@ -11,10 +11,9 @@ fn main() {
     let args = get_args();
     println!("{:?}", args);
     let scopes = get_scopes(args[0].clone());
-    println!("{:?}", scope);
-    // for scope in scopes.as_ref().unwrap().iter() {
-    //     println!("{}", scope);
-    // }
+    for scope in scopes.as_ref().unwrap().iter() {
+        println!("{}", scope);
+    }
     // get_cookie();
     let bounty = Table::new(
         Style::Fancy,
