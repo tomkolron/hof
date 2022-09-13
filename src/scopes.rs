@@ -3,7 +3,7 @@ use serde_json;
 
 #[tokio::main]
 
-pub async fn get_scopes(search: String) -> Result<Vec<String>, Box<dyn std::error::Error>>{
+pub async fn get_scopes(search: String) -> Result<Vec<String>, Box<dyn std::error::Error>> {
     let mut headers = header::HeaderMap::new();
     headers.insert("x-csrf-token", "8yI1bBt25477yWBqWfuUukx5+FM3I+52OgJp4K568o1fnDtYYXLIhC6839osAZnmID6QZlZ4rqBlyGTrLNncMw==".parse().unwrap());
     headers.insert("Content-Type", "application/json".parse().unwrap());

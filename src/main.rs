@@ -1,19 +1,28 @@
 mod args;
-mod request;
+mod scopes;
+mod bounties;
+
+use std::env;
 
 use args::get_args;
-// use request::{get_scopes, get_cookie};
-use request::get_scopes;
+use bounties::get_bounties;
+use scopes::get_scopes;
 
 use stybulate::{Table, Style, Cell, Headers};
 
 fn main() {
+    env::set_var("RUST_BACKTRACE", "1");
     let args = get_args();
     println!("{:?}", args);
     let scopes = get_scopes(args[0].clone());
     for scope in scopes.as_ref().unwrap().iter() {
         println!("{}", scope);
     }
+    let bounties = get_bounties(args[0].clone());
+    println!("{:?}", bounties);
+    // for scope in bounties.as_ref().unwrap().iter() {
+    //     println!("{}", scope);
+    // }
     let bounty = Table::new(
         Style::Fancy,
         vec![
