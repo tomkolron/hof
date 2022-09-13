@@ -3,7 +3,7 @@ use serde_json;
 
 #[tokio::main]
 
-pub async fn get_scopes(search: String) -> Result<Vec<String>, reqwest::Error>{
+pub async fn get_scopes(search: String) -> Result<Vec<String>, Box<dyn std::error::Error>>{
     let mut headers = header::HeaderMap::new();
     headers.insert("x-csrf-token", "8yI1bBt25477yWBqWfuUukx5+FM3I+52OgJp4K568o1fnDtYYXLIhC6839osAZnmID6QZlZ4rqBlyGTrLNncMw==".parse().unwrap());
     headers.insert("Content-Type", "application/json".parse().unwrap());
@@ -19,10 +19,13 @@ pub async fn get_scopes(search: String) -> Result<Vec<String>, reqwest::Error>{
         .await?
         .text()
         .await?;    
+    if res.contains("NOT_FOUND"){
+        panic!("couldn't get request");
+    }
     let json: serde_json::Value = serde_json::from_str(&res).expect("couldn't decode response to json");
     let scopes_json = json["data"]["team"]["in_scope_assets"]["edges"].as_array().unwrap();
     let mut scopes: Vec<String> = Vec::new();
-    
+
     for i in scopes_json.iter() {
         if i["node"]["asset_type"] == "URL" {
             scopes.push(i["node"]["asset_identifier"].to_string());
