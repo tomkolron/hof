@@ -3,7 +3,7 @@ use serde_json;
 
 #[tokio::main]
 
-pub async fn get_scopes(search: String) -> Vec<String> {
+pub async fn get_scopes(search: String) -> Result<Vec<String>, reqwest::Error>{
     let mut headers = header::HeaderMap::new();
     headers.insert("x-csrf-token", "8yI1bBt25477yWBqWfuUukx5+FM3I+52OgJp4K568o1fnDtYYXLIhC6839osAZnmID6QZlZ4rqBlyGTrLNncMw==".parse().unwrap());
     headers.insert("Content-Type", "application/json".parse().unwrap());
@@ -16,10 +16,9 @@ pub async fn get_scopes(search: String) -> Vec<String> {
         .headers(headers)
         .body(query)
         .send()
-        .await.expect("failed to send request")
+        .await?
         .text()
-        .await.expect("failed to get text out of response");
-    
+        .await?;    
     let json: serde_json::Value = serde_json::from_str(&res).expect("couldn't decode response to json");
     let scopes_json = json["data"]["team"]["in_scope_assets"]["edges"].as_array().unwrap();
     let mut scopes: Vec<String> = Vec::new();
@@ -29,6 +28,14 @@ pub async fn get_scopes(search: String) -> Vec<String> {
             scopes.push(i["node"]["asset_identifier"].to_string());
         }
     }
-
-    scopes
+    Ok(scopes)
 }
+
+// pub async fn get_cookie() -> Result<String, reqwest::Error> {
+//     let client = reqwest::Client::new();
+//     let res = client.get("https://hackerone.com/opportunities/all")
+//         .send()
+//         .await?;
+//     println!("res");
+//     Ok("asdf")
+// }
