@@ -14,7 +14,6 @@ fn main() {
     for scope in scopes.as_ref().unwrap().iter() {
         println!("{}", scope);
     }
-    // get_cookie();
     let bounty = Table::new(
         Style::Fancy,
         vec![

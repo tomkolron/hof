@@ -33,12 +33,3 @@ pub async fn get_scopes(search: String) -> Result<Vec<String>, Box<dyn std::erro
     }
     Ok(scopes)
 }
-
-// pub async fn get_cookie() -> Result<String, reqwest::Error> {
-//     let client = reqwest::Client::new();
-//     let res = client.get("https://hackerone.com/opportunities/all")
-//         .send()
-//         .await?;
-//     println!("res");
-//     Ok("asdf")
-// }
