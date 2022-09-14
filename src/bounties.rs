@@ -3,7 +3,7 @@ use serde_json;
 
 #[tokio::main]
 
-pub async fn get_bounties(search: String) -> Result<String, Box<dyn std::error::Error>> {
+pub async fn get_bounties(search: String) -> Result<[String; 4], Box<dyn std::error::Error>> {
     let mut headers = header::HeaderMap::new();
     headers.insert("x-csrf-token", "SamsFQNKt6SGoZGASqEVzOrk6Kr6aQ0L6fTCXVEq+WM511+bPXkgcJjnB9Ncha61QEAK3P3A8OSJZKXTVAvi3w==".parse().unwrap());
     headers.insert("Content-Type", "application/json".parse().unwrap());
@@ -23,5 +23,8 @@ pub async fn get_bounties(search: String) -> Result<String, Box<dyn std::error::
         panic!("couldn't get request");
     }
     let json: serde_json::Value = serde_json::from_str(&res).expect("couldn't decode response to json");
-    Ok(res)
+    let bounties_json = json["data"]["team"]["bounty_table"]["bounty_table_rows"]["edges"].as_array().unwrap();
+    let bounties: [String; 4] = [bounties_json[0]["node"]["low"].to_string(), bounties_json[0]["node"]["medium"].to_string(), bounties_json[0]["node"]["high"].to_string(), bounties_json[0]["node"]["critical"].to_string()];
+
+    Ok(bounties)
 }

@@ -24,8 +24,8 @@ pub async fn get_scopes(search: String) -> Result<Vec<String>, Box<dyn std::erro
     }
     let json: serde_json::Value = serde_json::from_str(&res).expect("couldn't decode response to json");
     let scopes_json = json["data"]["team"]["in_scope_assets"]["edges"].as_array().unwrap();
-    let mut scopes: Vec<String> = Vec::new();
 
+    let mut scopes: Vec<String> = Vec::new();
     for i in scopes_json.iter() {
         if i["node"]["asset_type"] == "URL" {
             scopes.push(i["node"]["asset_identifier"].to_string());
