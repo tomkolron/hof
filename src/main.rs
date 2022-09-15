@@ -12,13 +12,11 @@ use scopes::get_scopes;
 use stybulate::{Table, Style, Cell, Headers};
 
 fn main() {
-    // Set env var for more debugging info
-    env::set_var("RUST_BACKTRACE", "1");
     // Get cli argumets
     let args = FbbArgs::parse();
 
     // Create directory
-    let dir = fs::create_dir("./a");
+    let dir = fs::create_dir(args.path.clone());
     match dir {
         Ok(()) => println!("done creating directory"),
         Err(error) => match error.kind() {
