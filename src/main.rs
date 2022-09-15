@@ -3,8 +3,9 @@ mod scopes;
 mod bounties;
 
 use std::env;
+use clap::Parser;
 
-use args::get_args;
+use args::FbbArgs;
 use bounties::get_bounties;
 use scopes::get_scopes;
 
@@ -15,16 +16,16 @@ fn main() {
     env::set_var("RUST_BACKTRACE", "1");
 
     // Get cli argumets
-    let args = get_args();
+    let args = FbbArgs::parse();
 
     // Get domain scopes
-    let scopes = get_scopes(args[0].clone());
+    let scopes = get_scopes(args.query.clone());
     for scope in scopes.as_ref().unwrap().iter() {
         println!("{}", scope);
     }
 
     // Get bounties
-    let bounties = get_bounties(args[0].clone());
+    let bounties = get_bounties(args.query.clone());
     let bounty_table = Table::new(
         Style::Fancy,
         vec![
