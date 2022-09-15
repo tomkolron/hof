@@ -2,7 +2,7 @@ mod args;
 mod scopes;
 mod bounties;
 
-use std::env;
+use std::{fs, io, process};
 use clap::Parser;
 
 use args::FbbArgs;
@@ -14,9 +14,18 @@ use stybulate::{Table, Style, Cell, Headers};
 fn main() {
     // Set env var for more debugging info
     env::set_var("RUST_BACKTRACE", "1");
-
     // Get cli argumets
     let args = FbbArgs::parse();
+
+    // Create directory
+    let dir = fs::create_dir("./a");
+    match dir {
+        Ok(()) => println!("done creating directory"),
+        Err(error) => match error.kind() {
+            io::ErrorKind::AlreadyExists => overwrite_directory(),
+            other_error => panic!("problem creating directory: {:?}", other_error),
+        }
+    }
 
     // Get domain scopes
     let scopes = get_scopes(args.query.clone());
@@ -37,4 +46,21 @@ fn main() {
         Some(Headers::from(vec!["bounty", "prize"])),
     ).tabulate();
     println!("{}", bounty_table);
+}
+
+fn overwrite_directory() {
+    println!("Directory already exist would you like to overwrite it [y, N]");
+    let mut user_input = String::new();
+    let stdin = io::stdin();
+    stdin.read_line(&mut user_input);
+    if user_input == "y\n" || user_input == "Y\n" {
+        println!("overwriting directory ...");
+    }else {
+        quit()
+    }
+}
+
+fn quit() {
+    println!("GoodBye \u{1f44b}");
+    process::abort();
 }
