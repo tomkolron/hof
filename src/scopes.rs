@@ -28,7 +28,10 @@ pub async fn get_scopes(search: String) -> Result<Vec<String>, Box<dyn std::erro
     let mut scopes: Vec<String> = Vec::new();
     for i in scopes_json.iter() {
         if i["node"]["asset_type"] == "URL" {
-            scopes.push(i["node"]["asset_identifier"].to_string());
+            let mut i = i["node"]["asset_identifier"].to_string();
+            i.pop();
+            i.remove(0);
+            scopes.push(i);
         }
     }
     Ok(scopes)
