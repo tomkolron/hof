@@ -50,7 +50,11 @@ fn overwrite_directory(path: String) {
     println!("Directory already exist would you like to overwrite it [y, N]");
     let mut user_input = String::new();
     let stdin = io::stdin();
-    stdin.read_line(&mut user_input);
+    let read_line = stdin.read_line(&mut user_input);
+    match read_line {
+        Ok(_a) => {},
+        Err(error) => panic!("Problem reading user input: {:?}", error.kind()),
+    }
     if user_input == "y\n" || user_input == "Y\n" {
         println!("overwriting directory ...");
         let del_dir = fs::remove_dir_all(&path);
