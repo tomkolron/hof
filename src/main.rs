@@ -16,6 +16,7 @@ fn main() {
     let args = FbbArgs::parse();
 
     // Create directory
+    println!("Creating project directory ...");
     let dir = fs::create_dir(args.path.clone());
     match dir {
         Ok(()) => println!("Done creating project directory"),
