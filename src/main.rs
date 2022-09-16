@@ -3,6 +3,7 @@ mod scopes;
 mod bounties;
 
 use std::{fs, io, process};
+use std::io::Write;
 use clap::Parser;
 
 use args::FbbArgs;
@@ -19,18 +20,30 @@ fn main() {
     println!("Creating project directory ...");
     let dir = fs::create_dir(args.path.clone());
     match dir {
-        Ok(()) => println!("Done creating project directory"),
+        Ok(()) => {},
         Err(error) => match error.kind() {
             io::ErrorKind::AlreadyExists => overwrite_directory(args.path.clone()),
             other_error => panic!("Problem creating directory: {:?}", other_error),
         }
     }
 
+
+    // Create scopes file
+    println!("Creating scopes file ...");
+    let scopes_file = fs::File::create(format!("{}/scopes.txt", args.path.clone()));
+    let mut scopes_file = match scopes_file {
+        Ok(file) => file,
+        Err(error) => panic!("Error creating scopes file: {:?}", error.kind()),
+    };
+
     // Get domain scopes
     let scopes = get_scopes(args.query.clone());
     for scope in scopes.as_ref().unwrap().iter() {
         println!("{}", scope);
+        let file_scope = format!("{}\n", scope);
+        scopes_file.write(file_scope.as_bytes()).unwrap();
     }
+
 
     // Get bounties
     let bounties = get_bounties(args.query.clone());
