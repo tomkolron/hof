@@ -20,7 +20,7 @@ pub async fn get_bounties(search: String) -> Result<[String; 4], Box<dyn std::er
         .text()
         .await?;    
     if res.contains("NOT_FOUND"){
-        panic!("Request to get bounties failed");
+        panic!("Request to get bounties failed check you interenet connection and your query");
     }
     let json: serde_json::Value = serde_json::from_str(&res).expect("couldn't decode response to json");
     let bounties_json = json["data"]["team"]["bounty_table"]["bounty_table_rows"]["edges"].as_array().unwrap();
