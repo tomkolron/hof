@@ -20,7 +20,7 @@ pub async fn get_scopes(search: String) -> Result<Vec<String>, Box<dyn std::erro
         .text()
         .await?;    
     if res.contains("NOT_FOUND"){
-        panic!("couldn't get request");
+        panic!("Request to get scopes failed check you interenet connection and your query");
     }
     let json: serde_json::Value = serde_json::from_str(&res).expect("couldn't decode response to json");
     let scopes_json = json["data"]["team"]["in_scope_assets"]["edges"].as_array().unwrap();
