@@ -31,11 +31,7 @@ fn main() {
 
 
     // Create scopes file
-    let scopes_file = fs::File::create(format!("{}/scopes.txt", args.path.clone()));
-    let mut scopes_file = match scopes_file {
-        Ok(file) => file,
-        Err(error) => panic!("Error creating scopes file: {:?}", error.kind()),
-    };
+    let mut scopes_file = fs::File::create(format!("{}/scopes.txt", args.path.clone())).expect("Error creating scopes file");
 
     // Get domain scopes
     println!("Writing to scopes file:");
@@ -43,20 +39,16 @@ fn main() {
     for scope in scopes.as_ref().unwrap().iter() {
         println!("{}", scope);
         let file_scope = format!("{}\n", scope);
-        scopes_file.write(file_scope.as_bytes()).unwrap();
+        scopes_file.write(file_scope.as_bytes()).expect("Error writing to scopes file");
     }
 
     // Create subdomains file
-    let subs_file = fs::File::create(format!("{}/subdomains.txt", args.path.clone()));
-    let mut subs_file = match subs_file {
-        Ok(file) => file,
-        Err(error) => panic!("Error creating subdomains file: {:?}", error.kind()),
-    };
+    let mut subs_file = fs::File::create(format!("{}/subdomains.txt", args.path.clone())).expect("Error creating subdomains file");
 
     // Get subdomains
     let subs = get_subs(scopes.as_ref().unwrap().to_vec());
     let subs_vec: Vec<&str> = subs.split("\n").collect();
-    subs_file.write(subs.as_bytes()).unwrap();
+    subs_file.write(subs.as_bytes()).expect("Error writing to subdomains file");
     println!("Found {} subdomains", subs_vec.len());
 
     // Get bounties
@@ -79,23 +71,11 @@ fn overwrite_directory(path: String) {
     println!("Directory already exist would you like to overwrite it [y, N]");
     let mut user_input = String::new();
     let stdin = io::stdin();
-    let read_line = stdin.read_line(&mut user_input);
-    match read_line {
-        Ok(_a) => {},
-        Err(error) => panic!("Problem reading user input: {:?}", error.kind()),
-    }
+    stdin.read_line(&mut user_input).expect("Problem reading user input");
     if user_input == "y\n" || user_input == "Y\n" {
         println!("overwriting directory ...");
-        let del_dir = fs::remove_dir_all(&path);
-        match del_dir {
-            Ok(()) => {},
-            Err(error) => panic!("There was a problem overwriting directory: {:?}", error.kind()),
-        }
-        let re_dir = fs::create_dir(&path);
-        match re_dir {
-            Ok(()) => {},
-            Err(error) => panic!("There was a problem overwriting directory: {:?}", error.kind()),
-        }
+        fs::remove_dir_all(&path).expect("There was a problem overwriting directory");
+        fs::create_dir(&path).expect("There was a problem overwriting directory");
     }else {
         quit()
     }

@@ -8,10 +8,7 @@ pub fn get_subs(scopes: Vec<String>) -> String {
         cmd.args(["-q", "-t", scope]);
         match cmd.output() {
             Ok(output) => {
-                let output_final = match String::from_utf8(output.stdout) {
-                    Ok(output) => output,
-                    Err(error) => panic!("Error formatting command output: {:?}", error),
-                };
+                let output_final = String::from_utf8(output.stdout).expect("Error formatting command output");
                 let mut output_final_clean = output_final.clone();
                 output_final_clean.pop();
                 output_final_clean.remove(0);
