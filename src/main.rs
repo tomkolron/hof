@@ -33,20 +33,27 @@ fn main() {
     // Create scopes file
     let mut scopes_file = fs::File::create(format!("{}/scopes.txt", args.path.clone())).expect("Error creating scopes file");
 
+    // Filter scopes
+    let mut filtered_scopes = Vec::new();
+
     // Get domain scopes
     println!("Writing to scopes file:\n");
     let scopes = get_scopes(args.query.clone());
     for scope in scopes.as_ref().unwrap().iter() {
         println!("{}", scope);
         let file_scope = format!("{}\n", scope);
+        let filtered_scope = scope.replace("*.", "");
+        filtered_scopes.push(filtered_scope);
         scopes_file.write(file_scope.as_bytes()).expect("Error writing to scopes file");
     }
+    println!("");
 
     // Create subdomains file
     let mut subs_file = fs::File::create(format!("{}/subdomains.txt", args.path.clone())).expect("Error creating subdomains file");
 
+
     // Get subdomains
-    let subs = get_subs(scopes.as_ref().unwrap().to_vec());
+    let subs = get_subs(filtered_scopes);
     let subs_vec: Vec<&str> = subs.split("\n").collect();
     subs_file.write(subs.as_bytes()).expect("Error writing to subdomains file");
     println!("Found {} subdomains\n", subs_vec.len());
