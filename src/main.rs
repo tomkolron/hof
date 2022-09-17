@@ -19,7 +19,7 @@ fn main() {
     let args = FbbArgs::parse();
 
     // Create directory
-    println!("Creating project directory ...");
+    println!("Creating project directory ...\n");
     let dir = fs::create_dir(args.path.clone());
     match dir {
         Ok(()) => {},
@@ -34,7 +34,7 @@ fn main() {
     let mut scopes_file = fs::File::create(format!("{}/scopes.txt", args.path.clone())).expect("Error creating scopes file");
 
     // Get domain scopes
-    println!("Writing to scopes file:");
+    println!("Writing to scopes file:\n");
     let scopes = get_scopes(args.query.clone());
     for scope in scopes.as_ref().unwrap().iter() {
         println!("{}", scope);
@@ -49,7 +49,7 @@ fn main() {
     let subs = get_subs(scopes.as_ref().unwrap().to_vec());
     let subs_vec: Vec<&str> = subs.split("\n").collect();
     subs_file.write(subs.as_bytes()).expect("Error writing to subdomains file");
-    println!("Found {} subdomains", subs_vec.len());
+    println!("Found {} subdomains\n", subs_vec.len());
 
     // Get bounties
     let bounties = get_bounties(args.query.clone());
@@ -73,7 +73,7 @@ fn overwrite_directory(path: String) {
     let stdin = io::stdin();
     stdin.read_line(&mut user_input).expect("Problem reading user input");
     if user_input == "y\n" || user_input == "Y\n" {
-        println!("overwriting directory ...");
+        println!("overwriting directory ...\n");
         fs::remove_dir_all(&path).expect("There was a problem overwriting directory");
         fs::create_dir(&path).expect("There was a problem overwriting directory");
     }else {
