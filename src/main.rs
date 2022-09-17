@@ -1,6 +1,7 @@
 mod args;
 mod scopes;
 mod bounties;
+mod subdomains;
 
 use std::{fs, io, process};
 use std::io::Write;
@@ -9,6 +10,7 @@ use clap::Parser;
 use args::FbbArgs;
 use bounties::get_bounties;
 use scopes::get_scopes;
+use subdomains::get_subs;
 
 use stybulate::{Table, Style, Cell, Headers};
 
@@ -29,7 +31,6 @@ fn main() {
 
 
     // Create scopes file
-    println!("Creating scopes file ...");
     let scopes_file = fs::File::create(format!("{}/scopes.txt", args.path.clone()));
     let mut scopes_file = match scopes_file {
         Ok(file) => file,
@@ -37,6 +38,7 @@ fn main() {
     };
 
     // Get domain scopes
+    println!("Writing to scopes file:");
     let scopes = get_scopes(args.query.clone());
     for scope in scopes.as_ref().unwrap().iter() {
         println!("{}", scope);
@@ -44,6 +46,10 @@ fn main() {
         scopes_file.write(file_scope.as_bytes()).unwrap();
     }
 
+    // Get subdomains
+    let subs = get_subs(scopes.as_ref().unwrap().to_vec());
+    let subs_vec: Vec<&str> = subs.split("\n").collect();
+    println!("Found {} subdomains", subs_vec.len());
 
     // Get bounties
     let bounties = get_bounties(args.query.clone());
@@ -58,6 +64,7 @@ fn main() {
         Some(Headers::from(vec!["bounty", "prize"])),
     ).tabulate();
     println!("{}", bounty_table);
+
 }
 
 fn overwrite_directory(path: String) {
