@@ -46,9 +46,17 @@ fn main() {
         scopes_file.write(file_scope.as_bytes()).unwrap();
     }
 
+    // Create subdomains file
+    let subs_file = fs::File::create(format!("{}/subdomains.txt", args.path.clone()));
+    let mut subs_file = match subs_file {
+        Ok(file) => file,
+        Err(error) => panic!("Error creating subdomains file: {:?}", error.kind()),
+    };
+
     // Get subdomains
     let subs = get_subs(scopes.as_ref().unwrap().to_vec());
     let subs_vec: Vec<&str> = subs.split("\n").collect();
+    subs_file.write(subs.as_bytes()).unwrap();
     println!("Found {} subdomains", subs_vec.len());
 
     // Get bounties
