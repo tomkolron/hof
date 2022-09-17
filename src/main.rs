@@ -60,7 +60,8 @@ fn main() {
     subs_file.write(subs.as_bytes()).expect("Error writing to subdomains file");
     println!("Found {} subdomains\n", subs_vec.len());
 
-    let headers = get_headers("monkeytype.com");
+    // Get headers
+    let headers = get_headers("https://monkeytype.com");
     println!("{:?}", headers);
 
     // Get bounties
