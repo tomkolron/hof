@@ -2,6 +2,7 @@ mod args;
 mod scopes;
 mod bounties;
 mod subdomains;
+mod headers;
 
 use std::{fs, io, process};
 use std::io::Write;
@@ -11,6 +12,7 @@ use args::FbbArgs;
 use bounties::get_bounties;
 use scopes::get_scopes;
 use subdomains::get_subs;
+use headers::get_headers;
 
 use stybulate::{Table, Style, Cell, Headers};
 
@@ -58,6 +60,9 @@ fn main() {
     subs_file.write(subs.as_bytes()).expect("Error writing to subdomains file");
     println!("Found {} subdomains\n", subs_vec.len());
 
+    let headers = get_headers("monkeytype.com");
+    println!("{:?}", headers);
+
     // Get bounties
     let bounties = get_bounties(args.query.clone());
     let bounty_table = Table::new(
@@ -71,7 +76,6 @@ fn main() {
         Some(Headers::from(vec!["bounty", "prize"])),
     ).tabulate();
     println!("{}", bounty_table);
-
 }
 
 fn overwrite_directory(path: String) {
