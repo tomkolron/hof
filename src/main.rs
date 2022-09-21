@@ -55,14 +55,25 @@ fn main() {
 
 
     // Get subdomains
-    let subs = get_subs(filtered_scopes);
+    let subs = get_subs(filtered_scopes.clone());
     let subs_vec: Vec<&str> = subs.split("\n").collect();
+    let mut all_domains: Vec<String> = Vec::new();
+    for sub in &subs_vec {
+        all_domains.push(String::from(format!("https://{}", sub)));
+    }
+    for scope in filtered_scopes {
+        all_domains.push(String::from(format!("https://{}", scope)));
+    }
     subs_file.write(subs.as_bytes()).expect("Error writing to subdomains file");
-    println!("Found {} subdomains\n", subs_vec.len());
+    println!("Found {} subdomains\n", subs_vec.len() - 1);
+   
+    //Create http headers file
+    let mut headers_file = fs::File::create(format!("{}/headers.txt", args.path.clone())).expect("Error creating subdomains file");
 
     // Get headers
-    let headers = get_headers("https://monkeytype.com");
-    println!("{:?}", headers);
+    let headers = get_headers(all_domains);
+    headers_file.write(headers.unwrap().as_bytes()).expect("Error writing to http headers file");
+
 
     // Get bounties
     let bounties = get_bounties(args.query.clone());
