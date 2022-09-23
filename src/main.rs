@@ -17,7 +17,9 @@ use headers::get_headers;
 use stybulate::{Table, Style, Cell, Headers};
 
 fn main() {
+    // Set time to measure how long program runs
     let time = time::Instant::now();
+
     // Get cli argumets
     let args = FbbArgs::parse();
 
@@ -39,36 +41,51 @@ fn main() {
     // Filter scopes
     let mut filtered_scopes = Vec::new();
 
+    // Subs scopes
+    let mut subs_scopes = Vec::new();
+
     // Get domain scopes
     println!("Writing to scopes file:\n");
     let scopes = get_scopes(args.query.clone());
     for scope in scopes.as_ref().unwrap().iter() {
         println!("{}", scope);
+
         let file_scope = format!("{}\n", scope);
-        let filtered_scope = scope.replace("*.", "");
+
+        let filtered_scope = scope.replace("*.", "https://");
         filtered_scopes.push(filtered_scope);
+
+        if scope.contains("*.") {
+            let subs_scope = scope.replace("*.", "");
+            subs_scopes.push(subs_scope);
+        }
         scopes_file.write(file_scope.as_bytes()).expect("Error writing to scopes file");
     }
     println!("");
 
-    // Create subdomains file
-    let mut subs_file = fs::File::create(format!("{}/subdomains.txt", args.path.clone())).expect("Error creating subdomains file");
 
-
-    // Get subdomains
-    let subs = get_subs(filtered_scopes.clone());
-    let subs_vec: Vec<&str> = subs.split("\n").collect();
+    // Set all_domains
     let mut all_domains: Vec<String> = Vec::new();
-    for sub in &subs_vec {
-        all_domains.push(String::from(format!("https://{}", sub)));
-    }
     for scope in filtered_scopes {
-        all_domains.push(String::from(format!("https://{}", scope)));
+        all_domains.push(String::from(scope));
     }
-    subs_file.write(subs.as_bytes()).expect("Error writing to subdomains file");
-    println!("Found {} subdomains\n", subs_vec.len() - 1);
+
+    if subs_scopes.len() > 0 {
+        // Create subdomains file
+        let mut subs_file = fs::File::create(format!("{}/subdomains.txt", args.path.clone())).expect("Error creating subdomains file");
+        
+        // Get subdomains
+        let subs = get_subs(subs_scopes.clone());
+        let subs_vec: Vec<&str> = subs.split("\n").collect();
+        subs_file.write(subs.as_bytes()).expect("Error writing to subdomains file");
+        println!("Found {} subdomains\n", subs_vec.len() - 1);
+        for sub in &subs_vec {
+            all_domains.push(String::from(format!("https://{}", sub)));
+        }
+    }
    
-    //Create http headers file
+
+    // Create http headers file
     let mut headers_file = fs::File::create(format!("{}/headers.txt", args.path.clone())).expect("Error creating subdomains file");
 
     // Get headers
