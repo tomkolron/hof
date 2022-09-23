@@ -4,7 +4,7 @@ mod bounties;
 mod subdomains;
 mod headers;
 
-use std::{fs, io, process};
+use std::{fs, io, process, time};
 use std::io::Write;
 use clap::Parser;
 
@@ -17,6 +17,7 @@ use headers::get_headers;
 use stybulate::{Table, Style, Cell, Headers};
 
 fn main() {
+    let time = time::Instant::now();
     // Get cli argumets
     let args = FbbArgs::parse();
 
@@ -88,6 +89,7 @@ fn main() {
         Some(Headers::from(vec!["bounty", "prize"])),
     ).tabulate();
     println!("{}", bounty_table);
+    println!("took {}s to run.", time.elapsed().as_secs());
 }
 
 fn overwrite_directory(path: String) {
