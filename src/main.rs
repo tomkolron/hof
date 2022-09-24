@@ -106,7 +106,12 @@ fn main() {
         Some(Headers::from(vec!["bounty", "prize"])),
     ).tabulate();
     println!("{}", bounty_table);
-    println!("took {}s to run.", time.elapsed().as_secs());
+
+    let duration = time.elapsed();
+    let millis = duration.as_millis() % 60;
+    let seconds = (duration.as_millis() / 1000) % 60;
+    let minutes = (duration.as_millis() / 1000) / 60;
+    println!("{}m and {}.{}s", minutes, seconds, millis);
 }
 
 fn overwrite_directory(path: String) {
