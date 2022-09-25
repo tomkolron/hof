@@ -111,7 +111,7 @@ fn main() {
     let millis = duration.as_millis() % 60;
     let seconds = (duration.as_millis() / 1000) % 60;
     let minutes = (duration.as_millis() / 1000) / 60;
-    println!("{}m and {}.{}s", minutes, seconds, millis);
+    println!("took {}m and {}.{}s to run.", minutes, seconds, millis);
 }
 
 fn overwrite_directory(path: String) {
