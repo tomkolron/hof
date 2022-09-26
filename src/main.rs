@@ -3,6 +3,7 @@ mod scopes;
 mod bounties;
 mod subdomains;
 mod headers;
+mod cookie_and_token;
 
 use std::{fs, io, process, time};
 use std::io::Write;
@@ -13,12 +14,14 @@ use bounties::get_bounties;
 use scopes::get_scopes;
 use subdomains::get_subs;
 use headers::get_headers;
+use cookie_and_token::get_cookie_and_token;
 
 use stybulate::{Table, Style, Cell, Headers};
 
 fn main() {
     // Set time to measure how long program runs
     let time = time::Instant::now();
+
 
     // Get cli argumets
     let args = FbbArgs::parse();
@@ -47,9 +50,12 @@ fn main() {
     // Subs scopes
     let mut subs_scopes = Vec::new();
 
+    // Get cookie and csrf token
+    let cookie_and_token = get_cookie_and_token();
+
     // Get domain scopes
     println!("Writing to scopes file:\n");
-    let scopes = get_scopes(args.query.clone());
+    let scopes = get_scopes(args.query.clone(), &cookie_and_token.as_ref().unwrap()[0].clone(), &cookie_and_token.as_ref().unwrap()[1].clone());
     for scope in scopes.as_ref().unwrap().iter() {
         println!("{}", scope);
 
