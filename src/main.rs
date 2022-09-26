@@ -52,7 +52,7 @@ fn main() {
 
         let file_scope = format!("{}\n", scope);
 
-        let filtered_scope = scope.replace("*.", "https://");
+        let filtered_scope = scope.replace("*.", "");
         filtered_scopes.push(filtered_scope);
 
         if scope.contains("*.") {
@@ -67,7 +67,7 @@ fn main() {
     // Set all_domains
     let mut all_domains: Vec<String> = Vec::new();
     for scope in filtered_scopes {
-        all_domains.push(String::from(scope));
+        all_domains.push(String::from(format!("https://{}", scope)));
     }
 
     if subs_scopes.len() > 0 {
@@ -84,13 +84,20 @@ fn main() {
         }
     }
    
+    // Create valid urls file
+    let mut valid_urls_file = fs::File::create(format!("{}/valid_urls.txt", args.path.clone())).expect("Error creating valid urls file");
+
+    // Create false urls file
+    let mut false_urls_file = fs::File::create(format!("{}/false_urls.txt", args.path.clone())).expect("Error creating false urls file");
 
     // Create http headers file
-    let mut headers_file = fs::File::create(format!("{}/headers.txt", args.path.clone())).expect("Error creating subdomains file");
+    let mut headers_file = fs::File::create(format!("{}/headers.txt", args.path.clone())).expect("Error creating http headers file");
 
     // Get headers
     let headers = get_headers(all_domains);
-    headers_file.write(headers.unwrap().as_bytes()).expect("Error writing to http headers file");
+    headers_file.write(headers.as_ref().unwrap()[0].as_bytes()).expect("Error writing to http headers file");
+    valid_urls_file.write(headers.as_ref().unwrap()[1].as_bytes()).expect("Error writing to valid domains file");
+    false_urls_file.write(headers.unwrap()[2].as_bytes()).expect("Error writing to false domains file");
 
 
     // Get bounties
