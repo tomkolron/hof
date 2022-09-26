@@ -23,20 +23,23 @@ fn main() {
     // Get cli argumets
     let args = FbbArgs::parse();
 
+    // Set path
+    let path = format!("{}/{}", args.path.clone(), args.query.clone());
+
     // Create directory
     println!("Creating project directory ...\n");
-    let dir = fs::create_dir(args.path.clone());
+    let dir = fs::create_dir(path.clone());
     match dir {
         Ok(()) => {},
         Err(error) => match error.kind() {
-            io::ErrorKind::AlreadyExists => overwrite_directory(args.path.clone()),
+            io::ErrorKind::AlreadyExists => overwrite_directory(path.clone()),
             other_error => panic!("Problem creating directory: {:?}", other_error),
         }
     }
 
 
     // Create scopes file
-    let mut scopes_file = fs::File::create(format!("{}/scopes.txt", args.path.clone())).expect("Error creating scopes file");
+    let mut scopes_file = fs::File::create(format!("{}/scopes.txt", path.clone())).expect("Error creating scopes file");
 
     // Filter scopes
     let mut filtered_scopes = Vec::new();
@@ -72,7 +75,7 @@ fn main() {
 
     if subs_scopes.len() > 0 {
         // Create subdomains file
-        let mut subs_file = fs::File::create(format!("{}/subdomains.txt", args.path.clone())).expect("Error creating subdomains file");
+        let mut subs_file = fs::File::create(format!("{}/subdomains.txt", path.clone())).expect("Error creating subdomains file");
         
         // Get subdomains
         let subs = get_subs(subs_scopes.clone());
@@ -85,13 +88,13 @@ fn main() {
     }
    
     // Create valid urls file
-    let mut valid_urls_file = fs::File::create(format!("{}/valid_urls.txt", args.path.clone())).expect("Error creating valid urls file");
+    let mut valid_urls_file = fs::File::create(format!("{}/valid_urls.txt", path.clone())).expect("Error creating valid urls file");
 
     // Create false urls file
-    let mut false_urls_file = fs::File::create(format!("{}/false_urls.txt", args.path.clone())).expect("Error creating false urls file");
+    let mut false_urls_file = fs::File::create(format!("{}/false_urls.txt", path.clone())).expect("Error creating false urls file");
 
     // Create http headers file
-    let mut headers_file = fs::File::create(format!("{}/headers.txt", args.path.clone())).expect("Error creating http headers file");
+    let mut headers_file = fs::File::create(format!("{}/headers.txt", path.clone())).expect("Error creating http headers file");
 
     // Get headers
     let headers = get_headers(all_domains);
