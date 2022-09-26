@@ -19,8 +19,7 @@ pub async fn get_headers(urls: Vec<String>) -> Result<Vec<String>, Box<dyn std::
     for url in urls.iter() {
         match make_req(url.to_string()).await {
             Ok(res) => {
-                valid_urls.push(String::from(url));
-                valid_urls.push(String::from("\n"));
+                valid_urls.push(String::from(format!("{}\n", url)));
 
                 headers.push(String::from(format!("Url: {}\n", url)));
 
@@ -47,7 +46,7 @@ pub async fn get_headers(urls: Vec<String>) -> Result<Vec<String>, Box<dyn std::
     }
 
     finalize_progress_bar();
-    return Ok(vec![headers.join(""), false_urls.join(""), false_urls.join("")]);
+    return Ok(vec![headers.join(""), valid_urls.join(""), false_urls.join("")]);
 }
 
 async fn make_req(url: String) -> Result<header::HeaderMap, Box<dyn std::error::Error>> {

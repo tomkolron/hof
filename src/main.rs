@@ -97,8 +97,17 @@ fn main() {
     let headers = get_headers(all_domains);
     headers_file.write(headers.as_ref().unwrap()[0].as_bytes()).expect("Error writing to http headers file");
     valid_urls_file.write(headers.as_ref().unwrap()[1].as_bytes()).expect("Error writing to valid domains file");
-    false_urls_file.write(headers.unwrap()[2].as_bytes()).expect("Error writing to false domains file");
+    false_urls_file.write(headers.as_ref().unwrap()[2].as_bytes()).expect("Error writing to false domains file");
 
+
+    // Print http headers statistics 
+    let mut valid_urls_count: Vec<&str> = headers.as_ref().unwrap()[1].split("\n").collect();
+    valid_urls_count.pop();
+
+    let mut false_urls_count: Vec<&str> = headers.as_ref().unwrap()[2].split("\n").collect();
+    false_urls_count.pop();
+
+    println!("Found {} valid urls and {} false urls.", valid_urls_count.len(), false_urls_count.len());
 
     // Get bounties
     let bounties = get_bounties(args.query.clone());
