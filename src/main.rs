@@ -110,7 +110,7 @@ fn main() {
     let mut false_urls_count: Vec<&str> = headers.as_ref().unwrap()[2].split("\n").collect();
     false_urls_count.pop();
 
-    println!("Found {} valid urls and {} false urls.", valid_urls_count.len(), false_urls_count.len());
+    println!("\nFound {} valid urls and {} false urls.\n", valid_urls_count.len(), false_urls_count.len());
 
     // Get bounties
     let bounties = get_bounties(args.query.clone());

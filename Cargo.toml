@@ -12,3 +12,4 @@ tokio = { version = "1.21.0", features = ["full"] }
 stybulate = "1.1.2"
 clap = { version = "3.2.21", features = ["derive"] }
 progress_bar = "1.0.2"
+scraper = "0.13.0"
