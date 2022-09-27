@@ -5,7 +5,6 @@ use std::collections::HashMap;
 use serde_json::{json, Value};
 
 pub fn create_cache(hashmap: &HashMap<&str, String>) -> Result<(), Box<dyn std::error::Error>> {
-    // println!("{}\n{}\n{}", hashmap["cookie"], hashmap["csrf"], hashmap["date"]);
     let mut cache_file = match fs::File::create(".cache") {
         Ok(file) => file,
         Err(error) => panic!("There was an error creating cache file: {}", error),
@@ -16,7 +15,7 @@ pub fn create_cache(hashmap: &HashMap<&str, String>) -> Result<(), Box<dyn std::
         "csrf": hashmap["csrf"],
         "date": hashmap["date"]
     });
-    cache_file.write(json.to_string().as_bytes()).expect("");
+    cache_file.write(serde_json::to_string_pretty(&json).unwrap().as_bytes()).expect("Couldn't write to cach");
     Ok(())
 }
 
