@@ -103,16 +103,17 @@ fn main() {
 
     // Get headers
     let headers = get_headers(all_domains);
-    headers_file.write(headers.as_ref().unwrap()[0].as_bytes()).expect("Error writing to http headers file");
-    valid_urls_file.write(headers.as_ref().unwrap()[1].as_bytes()).expect("Error writing to valid domains file");
-    false_urls_file.write(headers.as_ref().unwrap()[2].as_bytes()).expect("Error writing to false domains file");
+    // println!("{:?}", headers);
+    headers_file.write(headers.as_ref().unwrap()["headers"].as_bytes()).expect("Error writing to http headers file");
+    valid_urls_file.write(headers.as_ref().unwrap()["valid_urls"].as_bytes()).expect("Error writing to valid domains file");
+    false_urls_file.write(headers.as_ref().unwrap()["false_urls"].as_bytes()).expect("Error writing to false domains file");
 
 
     // Print http headers statistics 
-    let mut valid_urls_count: Vec<&str> = headers.as_ref().unwrap()[1].split("\n").collect();
+    let mut valid_urls_count: Vec<&str> = headers.as_ref().unwrap()["valid_urls"].split("\n").collect();
     valid_urls_count.pop();
 
-    let mut false_urls_count: Vec<&str> = headers.as_ref().unwrap()[2].split("\n").collect();
+    let mut false_urls_count: Vec<&str> = headers.as_ref().unwrap()["false_urls"].split("\n").collect();
     false_urls_count.pop();
 
     println!("\nFound {} valid urls and {} false urls.\n", valid_urls_count.len(), false_urls_count.len());

@@ -1,15 +1,18 @@
 use reqwest::{Client, header};
 use core::time::Duration;
 use progress_bar::*;
+use std::collections::HashMap;
 
 #[tokio::main]
 
-pub async fn get_headers(urls: Vec<String>) -> Result<Vec<String>, Box<dyn std::error::Error>>{
+pub async fn get_headers(urls: Vec<String>) -> Result<HashMap<&'static str, String>, Box<dyn std::error::Error>>{
     let mut headers: Vec<String> = Vec::new();
     
     let mut valid_urls: Vec<String> = Vec::new();
 
     let mut false_urls: Vec<String> = Vec::new();
+
+    let mut map: HashMap<&str, String> = HashMap::new();
 
     println!("Getting headers for all domains ...");
 
@@ -21,7 +24,7 @@ pub async fn get_headers(urls: Vec<String>) -> Result<Vec<String>, Box<dyn std::
             Ok(res) => {
                 valid_urls.push(String::from(format!("{}\n", url)));
 
-                headers.push(String::from(format!("Url: {}\n", url)));
+                headers.push(String::from(format!("\nUrl: {}\n\n", url)));
 
                 let mut headers_keys: Vec<&str> = Vec::new();
                 let mut headers_values: Vec<&str> = Vec::new();
@@ -35,22 +38,23 @@ pub async fn get_headers(urls: Vec<String>) -> Result<Vec<String>, Box<dyn std::
                 for i in 0..headers_keys.len() {
                     headers.push(format!("{}: {}\n", headers_keys[i], headers_values[i]));
                 }
-                headers.push(String::from("\n"));
             },
             Err(_error) => {
-                false_urls.push(String::from(url));
-                false_urls.push(String::from("\n"));
+                false_urls.push(String::from(format!("{}\n", url)));
             },
         }
         inc_progress_bar();
     }
 
     finalize_progress_bar();
-    return Ok(vec![headers.join(""), valid_urls.join(""), false_urls.join("")]);
+    map.insert("headers", headers.join(""));
+    map.insert("valid_urls", valid_urls.join(""));
+    map.insert("false_urls", false_urls.join(""));
+    return Ok(map);
+    // return Ok(vec![headers.join(""), valid_urls.join(""), false_urls.join("")]);
 }
 
 async fn make_req(url: String) -> Result<header::HeaderMap, Box<dyn std::error::Error>> {
-    // println!("Getting http response headers for {} ...", url);
     let client = Client::new();
     let res = client.get(url).timeout(Duration::from_secs(8)).send().await?.headers().clone();
     return Ok(res);
