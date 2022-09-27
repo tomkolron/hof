@@ -53,8 +53,8 @@ fn main() {
     let mut subs_scopes = Vec::new();
 
     // Check if cache is expired
-    let mut cookie_and_token = HashMap::new();
     let check_cache = check_cache();
+    let cookie_and_token: HashMap<&str, String>;
     if check_cache.as_ref().unwrap().contains_key("none") {
         // Get cookie and csrf token
         cookie_and_token = get_cookie_and_token().unwrap();
