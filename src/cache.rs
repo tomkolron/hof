@@ -34,20 +34,11 @@ pub fn check_cache() -> Result<HashMap<&'static str, String>, Box<dyn std::error
     let cache_json: Value = serde_json::from_str(&cache_str).expect("Error decoding cache file");
     let date = Local.datetime_from_str(cache_json["date"].as_str().unwrap(), "%Y-%m-%d %H:%M:%S %z").unwrap();
     let mut hashmap = HashMap::new();
-    let mut cookie_str = cache_json["cookie"].to_string();
-    cookie_str.remove(0);
-    cookie_str.pop();
-    let mut csrf_str = cache_json["csrf"].to_string();
-    csrf_str.remove(0);
-    csrf_str.pop();
-    let mut date_str = cache_json["date"].to_string();
-    date_str.remove(0);
-    date_str.pop();
 
     if Local::now() < date {
-        hashmap.insert("cookie", cookie_str);
-        hashmap.insert("csrf", csrf_str);
-        hashmap.insert("date", date_str);
+        hashmap.insert("cookie", cache_json["cookie"].as_str().unwrap().to_string());
+        hashmap.insert("csrf", cache_json["csrf"].as_str().unwrap().to_string());
+        hashmap.insert("date", cache_json["date"].as_str().unwrap().to_string());
     }else {
         hashmap.insert("none", String::from("true"));
     }

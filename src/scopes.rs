@@ -28,9 +28,7 @@ pub async fn get_scopes(search: String, cookie: String, csrf: String) -> Result<
     let mut scopes: Vec<String> = Vec::new();
     for i in scopes_json.iter() {
         if i["node"]["asset_type"] == "URL" {
-            let mut i = i["node"]["asset_identifier"].to_string();
-            i.pop();
-            i.remove(0);
+            let i = i["node"]["asset_identifier"].as_str().unwrap().to_string();
             scopes.push(i);
         }
     }
