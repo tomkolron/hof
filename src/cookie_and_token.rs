@@ -1,9 +1,11 @@
 use reqwest::Client;
 use scraper::{Html, Selector};
+use chrono::{Local, TimeZone};
+use std::collections::HashMap;
 
 #[tokio::main]
 
-pub async fn get_cookie_and_token() -> Result<Vec<String>, Box<dyn std::error::Error>> {
+pub async fn get_cookie_and_token() -> Result<HashMap<&'static str, String>, Box<dyn std::error::Error>> {
     let url = "https://hackerone.com/reddit?type=team";
     let client = Client::new();
     let res = client.get(url).send().await?;
@@ -17,22 +19,20 @@ pub async fn get_cookie_and_token() -> Result<Vec<String>, Box<dyn std::error::E
         csrf = i.value().attr("content").unwrap();
     }
 
-    let mut headers_keys: Vec<&str> = Vec::new();
     let mut headers_values: Vec<&str> = Vec::new();
 
-    let mut host: Vec<&str> = Vec::new();
-
-    for key in cookie_res.keys() {
-        headers_keys.push(key.as_str());
-    }
     for value in cookie_res.values() {
         headers_values.push(value.to_str().unwrap());
     }
-    for i in 0..headers_keys.len() {
-        if headers_keys[i] == "strict-transport-security" {
-            host = headers_values[i].split(";").collect();
-        }
-    }
+    let host: Vec<&str> = headers_values[9].split(";").collect();
+    let date = Local.datetime_from_str(host[2].replace(" expires=", "").as_str(), "%a, %d %h %Y %H:%M:%S GMT").unwrap();
+
     let cookie = host[0];
-    Ok(vec![cookie.to_string(), csrf.to_string()])
+
+    let mut hashmap: HashMap<&str, String> = HashMap::new();
+    hashmap.insert("cookie", cookie.to_string());
+    hashmap.insert("csrf", csrf.to_string());
+    hashmap.insert("date", date.to_string());
+
+    Ok(hashmap)
 }

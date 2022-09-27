@@ -12,7 +12,7 @@ pub async fn get_headers(urls: Vec<String>) -> Result<HashMap<&'static str, Stri
 
     let mut false_urls: Vec<String> = Vec::new();
 
-    let mut map: HashMap<&str, String> = HashMap::new();
+    let mut hashmap: HashMap<&str, String> = HashMap::new();
 
     println!("Getting headers for all domains ...");
 
@@ -47,10 +47,10 @@ pub async fn get_headers(urls: Vec<String>) -> Result<HashMap<&'static str, Stri
     }
 
     finalize_progress_bar();
-    map.insert("headers", headers.join(""));
-    map.insert("valid_urls", valid_urls.join(""));
-    map.insert("false_urls", false_urls.join(""));
-    return Ok(map);
+    hashmap.insert("headers", headers.join(""));
+    hashmap.insert("valid_urls", valid_urls.join(""));
+    hashmap.insert("false_urls", false_urls.join(""));
+    return Ok(hashmap);
     // return Ok(vec![headers.join(""), valid_urls.join(""), false_urls.join("")]);
 }
 

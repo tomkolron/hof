@@ -4,10 +4,12 @@ mod bounties;
 mod subdomains;
 mod headers;
 mod cookie_and_token;
+mod cache;
 
 use std::{fs, io, process, time};
 use std::io::Write;
 use clap::Parser;
+use std::collections::HashMap;
 
 use args::FbbArgs;
 use bounties::get_bounties;
@@ -15,6 +17,7 @@ use scopes::get_scopes;
 use subdomains::get_subs;
 use headers::get_headers;
 use cookie_and_token::get_cookie_and_token;
+use cache::{create_cache, check_cache};
 
 use stybulate::{Table, Style, Cell, Headers};
 
@@ -49,12 +52,22 @@ fn main() {
     // Subs scopes
     let mut subs_scopes = Vec::new();
 
-    // Get cookie and csrf token
-    let cookie_and_token = get_cookie_and_token();
+    // Check if cache is expired
+    let mut cookie_and_token = HashMap::new();
+    let check_cache = check_cache();
+    if check_cache.as_ref().unwrap().contains_key("none") {
+        // Get cookie and csrf token
+        cookie_and_token = get_cookie_and_token().unwrap();
+        // Create cache for csrf token and cookie
+        create_cache(&cookie_and_token).expect("Couldn't create cache");
+    }else {
+        // Get cookie and csrf token from cache
+        cookie_and_token = check_cache.unwrap();
+    }
 
     // Get domain scopes
     println!("Writing to scopes file:\n");
-    let scopes = get_scopes(args.query.clone(), &cookie_and_token.as_ref().unwrap()[0].clone(), &cookie_and_token.as_ref().unwrap()[1].clone());
+    let scopes = get_scopes(args.query.clone(), cookie_and_token["cookie"].clone(), cookie_and_token["csrf"].clone());
     for scope in scopes.as_ref().unwrap().iter() {
         println!("{}", scope);
 
@@ -119,7 +132,7 @@ fn main() {
     println!("\nFound {} valid urls and {} false urls.\n", valid_urls_count.len(), false_urls_count.len());
 
     // Get bounties
-    let bounties = get_bounties(args.query.clone());
+    let bounties = get_bounties(args.query.clone(), cookie_and_token["cookie"].clone(), cookie_and_token["csrf"].clone());
     if bounties.as_ref().unwrap()[0] == "none" {
         println!("No bounty reward avalible.");
 
@@ -134,7 +147,7 @@ fn main() {
             ],
             Some(Headers::from(vec!["bounty", "prize"])),
         ).tabulate();
-        println!("\n{}", bounty_table);
+        println!("{}", bounty_table);
     }
 
     let duration = time.elapsed();
