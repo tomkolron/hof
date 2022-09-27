@@ -120,17 +120,22 @@ fn main() {
 
     // Get bounties
     let bounties = get_bounties(args.query.clone());
-    let bounty_table = Table::new(
-        Style::Fancy,
-        vec![
-            vec![Cell::from("Low"), Cell::from(format!("{} USD", bounties.as_ref().unwrap()[0]).as_str())],
-            vec![Cell::from("Medium"), Cell::from(format!("{} USD", bounties.as_ref().unwrap()[1]).as_str())],
-            vec![Cell::from("High"), Cell::from(format!("{} USD", bounties.as_ref().unwrap()[2]).as_str())],
-            vec![Cell::from("Critical"), Cell::from(format!("{} USD", bounties.as_ref().unwrap()[3]).as_str())],
-        ],
-        Some(Headers::from(vec!["bounty", "prize"])),
-    ).tabulate();
-    println!("{}", bounty_table);
+    if bounties.as_ref().unwrap()[0] == "none" {
+        println!("No bounty reward avalible.");
+
+    }else {
+        let bounty_table = Table::new(
+            Style::Fancy,
+            vec![
+                vec![Cell::from("Low"), Cell::from(format!("{} USD", bounties.as_ref().unwrap()[0]).as_str())],
+                vec![Cell::from("Medium"), Cell::from(format!("{} USD", bounties.as_ref().unwrap()[1]).as_str())],
+                vec![Cell::from("High"), Cell::from(format!("{} USD", bounties.as_ref().unwrap()[2]).as_str())],
+                vec![Cell::from("Critical"), Cell::from(format!("{} USD", bounties.as_ref().unwrap()[3]).as_str())],
+            ],
+            Some(Headers::from(vec!["bounty", "prize"])),
+        ).tabulate();
+        println!("\n{}", bounty_table);
+    }
 
     let duration = time.elapsed();
     let millis = duration.as_millis() % 60;
