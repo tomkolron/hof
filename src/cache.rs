@@ -21,7 +21,17 @@ pub fn create_cache(hashmap: &HashMap<&str, String>) -> Result<(), Box<dyn std::
 }
 
 pub fn check_cache() -> Result<HashMap<&'static str, String>, Box<dyn std::error::Error>> {
-    let cache_str = fs::read_to_string(".cache").unwrap();
+    let cache_str = match fs::read_to_string(".cache") {
+        Ok(file) => file,
+        Err(error) => match error.kind() {
+            std::io::ErrorKind::NotFound => {
+                let mut hashmap = HashMap::new();
+                hashmap.insert("none", String::from("true"));
+                return Ok(hashmap);
+            },
+            _ => panic!("Error reading cache file"),
+        },
+    };
     let cache_json: Value = serde_json::from_str(&cache_str).expect("Error decoding cache file");
     let date = Local.datetime_from_str(cache_json["date"].as_str().unwrap(), "%Y-%m-%d %H:%M:%S %z").unwrap();
     let mut hashmap = HashMap::new();
