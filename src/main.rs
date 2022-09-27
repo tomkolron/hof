@@ -88,7 +88,11 @@ fn main() {
     // Set all_domains
     let mut all_domains: Vec<String> = Vec::new();
     for scope in filtered_scopes {
-        all_domains.push(String::from(format!("https://{}", scope)));
+        if scope.contains("https://") {
+            all_domains.push(scope);
+        }else {
+            all_domains.push(String::from(format!("https://{}", scope)));
+        }
     }
 
     if subs_scopes.len() > 0 {
