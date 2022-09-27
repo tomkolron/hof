@@ -22,7 +22,6 @@ fn main() {
     // Set time to measure how long program runs
     let time = time::Instant::now();
 
-
     // Get cli argumets
     let args = FbbArgs::parse();
 
