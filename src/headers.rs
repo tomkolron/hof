@@ -2,6 +2,7 @@ use reqwest::{Client, header};
 use core::time::Duration;
 use progress_bar::*;
 use std::collections::HashMap;
+use std::time;
 
 #[tokio::main]
 
@@ -13,6 +14,8 @@ pub async fn get_headers(urls: Vec<String>) -> Result<HashMap<&'static str, Stri
     let mut false_urls: Vec<String> = Vec::new();
 
     let mut hashmap: HashMap<&str, String> = HashMap::new();
+     
+    let mut times: Vec<u128> = Vec::new();
 
     println!("Getting headers for all domains ...");
 
@@ -20,6 +23,7 @@ pub async fn get_headers(urls: Vec<String>) -> Result<HashMap<&'static str, Stri
     set_progress_bar_action("Loading", Color::Blue, Style::Bold);
 
     for url in urls.iter() {
+        let time = time::Instant::now();
         match make_req(url.to_string()).await {
             Ok(res) => {
                 valid_urls.push(String::from(format!("{}\n", url)));
@@ -43,10 +47,14 @@ pub async fn get_headers(urls: Vec<String>) -> Result<HashMap<&'static str, Stri
                 false_urls.push(String::from(format!("{}\n", url)));
             },
         }
+        times.push(time.elapsed().as_millis());
         inc_progress_bar();
     }
 
     finalize_progress_bar();
+    let time_sum: u128 = times.iter().sum();
+    let time_avg: u128 = time_sum / times.len() as u128;
+    println!("{}", time_avg);
     hashmap.insert("headers", headers.join(""));
     hashmap.insert("valid_urls", valid_urls.join(""));
     hashmap.insert("false_urls", false_urls.join(""));
