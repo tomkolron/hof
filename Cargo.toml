@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 reqwest = { version = "0.11.11", features = ["json"] }
-serde_json = "1.0.85"
+serde_json = "1.0"
 tokio = { version = "1.21.0", features = ["full"] }
 stybulate = "1.1.2"
 clap = { version = "3.2.21", features = ["derive"] }
