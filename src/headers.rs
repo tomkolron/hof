@@ -16,11 +16,14 @@ pub async fn get_headers(urls: Vec<String>) -> Result<HashMap<&'static str, Stri
     let mut hashmap: HashMap<&str, String> = HashMap::new();
      
     let mut times: Vec<u128> = Vec::new();
+    let mut time_avg: u128 = 0;
 
     println!("Getting headers for all domains ...");
 
     init_progress_bar(urls.len());
     set_progress_bar_action("Loading", Color::Blue, Style::Bold);
+    
+    let mut index: i32 = 0;
 
     for url in urls.iter() {
         let time = time::Instant::now();
@@ -48,13 +51,18 @@ pub async fn get_headers(urls: Vec<String>) -> Result<HashMap<&'static str, Stri
             },
         }
         times.push(time.elapsed().as_millis());
+        let time_sum: u128 = times.iter().sum();
+        time_avg = time_sum / times.len() as u128;
+        let time_remaining: f32 = ((urls.len() as i32 - index) * time_avg as i32) as f32 / 1000.0;
+        // times_remaining.push(time_remaining * time_avg as i32);
+        print_progress_bar_info("remaining: ", &time_remaining.to_string(), Color::Red, Style::Normal);
+        // times_remaining.push(time_avg as i32);
+        index += 1;
         inc_progress_bar();
     }
 
     finalize_progress_bar();
-    let time_sum: u128 = times.iter().sum();
-    let time_avg: u128 = time_sum / times.len() as u128;
-    println!("{}", time_avg);
+    // println!("{:?}", times_remaining);
     hashmap.insert("headers", headers.join(""));
     hashmap.insert("valid_urls", valid_urls.join(""));
     hashmap.insert("false_urls", false_urls.join(""));
