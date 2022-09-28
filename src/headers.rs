@@ -55,7 +55,7 @@ pub async fn get_headers(urls: Vec<String>) -> Result<HashMap<&'static str, Stri
         time_avg = time_sum / times.len() as u128;
         let time_remaining: f32 = ((urls.len() as i32 - index) * time_avg as i32) as f32 / 1000.0;
         // times_remaining.push(time_remaining * time_avg as i32);
-        print_progress_bar_info("remaining: ", &time_remaining.to_string(), Color::Red, Style::Normal);
+        print_progress_bar_info("remaining: ", format!("{}s", &time_remaining.to_string()).as_str(), Color::Red, Style::Normal);
         // times_remaining.push(time_avg as i32);
         index += 1;
         inc_progress_bar();
