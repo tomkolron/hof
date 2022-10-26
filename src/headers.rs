@@ -13,7 +13,7 @@ pub async fn get_headers(urls: Vec<String>) -> Result<HashMap<&'static str, Stri
             "{spinner:.cyan/blue} [{elapsed}] [{bar:60.cyan/blue}] ({pos}/{len}, ETA {eta})",
         )
         .unwrap()
-        .progress_chars("#>-")
+        .progress_chars("=> ")
     );
 
     let mut headers: Vec<String> = Vec::new();
