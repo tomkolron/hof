@@ -109,7 +109,7 @@ fn main() {
             all_domains.push(String::from(format!("https://{}", sub)));
         }
     }
-   
+
     // Create valid urls file
     let mut valid_urls_file = fs::File::create(format!("{}/valid_urls.txt", path.clone())).expect("Error creating valid urls file");
 
