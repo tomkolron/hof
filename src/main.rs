@@ -160,10 +160,26 @@ fn main() {
     let duration = time.elapsed();
     let millis = duration.as_millis() % 60;
     let seconds = (duration.as_millis() / 1000) % 60;
-    let minutes = (duration.as_millis() / 1000) / 60;
+    let minutes = (duration.as_millis() / (1000 * 60) ) % 60;
+    let hours = (duration.as_millis() / (1000 * 60 * 60) ) % 24;
+
+    let seconds_string = match seconds {
+        0 => String::from(""),
+        _ => format!("{}.{}s", seconds, millis)
+    };
+
+    let minutes_string = match minutes {
+        0 => String::from(""),
+        _ => format!("{}m and ", minutes)
+    };
+
+    let hours_string = match hours {
+        0 => String::from(""),
+        _ => format!("{}h ", hours)
+    };
 
     // Print time it took to run
-    println!("took {}m and {}.{}s to run.", minutes, seconds, millis);
+    println!("took {}{}{} to run.", hours_string, minutes_string, seconds_string);
 }
 
 // Function to check if user wants to overwrite directory
