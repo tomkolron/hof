@@ -5,7 +5,8 @@ use std::collections::HashMap;
 use serde_json::{json, Value};
 
 pub fn create_cache(hashmap: &HashMap<&str, String>) -> Result<(), Box<dyn std::error::Error>> {
-    let mut cache_file = match fs::File::create(".cache") {
+    fs::create_dir_all("/home/tom/.cache/hof/").unwrap();
+    let mut cache_file = match fs::File::create("/home/tom/.cache/hof/cache.txt") {
         Ok(file) => file,
         Err(error) => panic!("There was an error creating cache file: {}", error),
     };
@@ -20,7 +21,7 @@ pub fn create_cache(hashmap: &HashMap<&str, String>) -> Result<(), Box<dyn std::
 }
 
 pub fn check_cache() -> Result<HashMap<&'static str, String>, Box<dyn std::error::Error>> {
-    let cache_str = match fs::read_to_string(".cache") {
+    let cache_str = match fs::read_to_string("/home/tom/.cache/hof/cache.txt") {
         Ok(file) => file,
         Err(error) => match error.kind() {
             std::io::ErrorKind::NotFound => {
