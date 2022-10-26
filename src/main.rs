@@ -55,6 +55,7 @@ fn main() {
     // Check if cache is expired
     let check_cache = check_cache();
     let cookie_and_token: HashMap<&str, String>;
+
     if check_cache.as_ref().unwrap().contains_key("none") {
         // Get cookie and csrf token
         cookie_and_token = get_cookie_and_token().unwrap();
@@ -120,7 +121,6 @@ fn main() {
 
     // Get headers
     let headers = get_headers(all_domains);
-    // println!("{:?}", headers);
     headers_file.write(headers.as_ref().unwrap()["headers"].as_bytes()).expect("Error writing to http headers file");
     valid_urls_file.write(headers.as_ref().unwrap()["valid_urls"].as_bytes()).expect("Error writing to valid domains file");
     false_urls_file.write(headers.as_ref().unwrap()["false_urls"].as_bytes()).expect("Error writing to false domains file");
@@ -151,22 +151,31 @@ fn main() {
             ],
             Some(Headers::from(vec!["bounty", "prize"])),
         ).tabulate();
+
+        // Print bounties
         println!("{}", bounty_table);
     }
 
+    // Get time it took to run
     let duration = time.elapsed();
     let millis = duration.as_millis() % 60;
     let seconds = (duration.as_millis() / 1000) % 60;
     let minutes = (duration.as_millis() / 1000) / 60;
+
+    // Print time it took to run
     println!("took {}m and {}.{}s to run.", minutes, seconds, millis);
 }
 
+// Function to check if user wants to overwrite directory
 fn overwrite_directory(path: String) {
+    // Check if user wants to overwrite directory
     println!("Directory already exist would you like to overwrite it [y, N]");
     let mut user_input = String::new();
     let stdin = io::stdin();
     stdin.read_line(&mut user_input).expect("Problem reading user input");
+
     if user_input == "y\n" || user_input == "Y\n" {
+        // Overwrite directory
         println!("overwriting directory ...\n");
         fs::remove_dir_all(&path).expect("There was a problem overwriting directory");
         fs::create_dir(&path).expect("There was a problem overwriting directory");
@@ -175,6 +184,7 @@ fn overwrite_directory(path: String) {
     }
 }
 
+// Function to quit the program
 fn quit() {
     println!("GoodBye \u{1f44b}");
     process::exit(0);
