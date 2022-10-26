@@ -177,5 +177,5 @@ fn overwrite_directory(path: String) {
 
 fn quit() {
     println!("GoodBye \u{1f44b}");
-    process::abort();
+    process::exit(0);
 }
