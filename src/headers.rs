@@ -1,12 +1,21 @@
 use reqwest::{Client, header};
 use core::time::Duration;
-use progress_bar::*;
 use std::collections::HashMap;
-use std::time;
+use indicatif::{ProgressBar,ProgressStyle};
 
 #[tokio::main]
 
 pub async fn get_headers(urls: Vec<String>) -> Result<HashMap<&'static str, String>, Box<dyn std::error::Error>>{
+    let progress = ProgressBar::new(urls.len().try_into().unwrap());
+
+    progress.set_style(
+        ProgressStyle::with_template(
+            "{spinner:.cyan/blue} [{elapsed}] [{bar:60.cyan/blue}] ({pos}/{len}, ETA {eta})",
+        )
+        .unwrap()
+        .progress_chars("#>-")
+    );
+
     let mut headers: Vec<String> = Vec::new();
     
     let mut valid_urls: Vec<String> = Vec::new();
@@ -15,18 +24,9 @@ pub async fn get_headers(urls: Vec<String>) -> Result<HashMap<&'static str, Stri
 
     let mut hashmap: HashMap<&str, String> = HashMap::new();
      
-    let mut times: Vec<u128> = Vec::new();
-    let mut time_avg: u128 = 0;
-
     println!("Getting headers for all domains ...");
 
-    init_progress_bar(urls.len());
-    set_progress_bar_action("Loading", Color::Blue, Style::Bold);
-    
-    let mut index: i32 = 0;
-
     for url in urls.iter() {
-        let time = time::Instant::now();
         match make_req(url.to_string()).await {
             Ok(res) => {
                 valid_urls.push(String::from(format!("{}\n", url)));
@@ -50,24 +50,15 @@ pub async fn get_headers(urls: Vec<String>) -> Result<HashMap<&'static str, Stri
                 false_urls.push(String::from(format!("{}\n", url)));
             },
         }
-        times.push(time.elapsed().as_millis());
-        let time_sum: u128 = times.iter().sum();
-        time_avg = time_sum / times.len() as u128;
-        let time_remaining: f32 = ((urls.len() as i32 - index) * time_avg as i32) as f32 / 1000.0;
-        // times_remaining.push(time_remaining * time_avg as i32);
-        print_progress_bar_info("remaining: ", format!("{}s", &time_remaining.to_string()).as_str(), Color::Red, Style::Normal);
-        // times_remaining.push(time_avg as i32);
-        index += 1;
-        inc_progress_bar();
+        progress.inc(1);
     }
+    progress.finish();
+    println!("");
 
-    finalize_progress_bar();
-    // println!("{:?}", times_remaining);
     hashmap.insert("headers", headers.join(""));
     hashmap.insert("valid_urls", valid_urls.join(""));
     hashmap.insert("false_urls", false_urls.join(""));
     return Ok(hashmap);
-    // return Ok(vec![headers.join(""), valid_urls.join(""), false_urls.join("")]);
 }
 
 async fn make_req(url: String) -> Result<header::HeaderMap, Box<dyn std::error::Error>> {
