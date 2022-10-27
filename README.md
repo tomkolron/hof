@@ -1,8 +1,9 @@
 # hof
 Hacker one fetcher, fetch hacker one projects and get subdomains and heders for all scope domains.
 
-install:
-    ```cargo install hof```
+install with cargo: ```cargo install hof```
+install with the paru: ```paru -S hof```
+install with yay: ```yay -S hof```
 
 command arguments:
 
