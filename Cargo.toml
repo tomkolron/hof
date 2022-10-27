@@ -1,6 +1,6 @@
 [package]
 name = "hof"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 authors = ["tomkolron"]
 description = "Hacker one fetcher, fetch hacker one projects and get subdomains and heders for all scope domains"
