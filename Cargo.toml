@@ -5,6 +5,8 @@ edition = "2021"
 authors = ["tomkolron"]
 description = "Hacker one fetcher, fetch hacker one projects and get subdomains and heders for all scope domains."
 license = "MIT"
+homepage = "https://github.com/tomkolron/hof"
+repository = "https://github.com/tomkolron/hof"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
