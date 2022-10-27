@@ -29,9 +29,14 @@ pub async fn get_headers(urls: Vec<String>) -> Result<HashMap<&'static str, Stri
     for url in urls.iter() {
         match make_req(url.to_string()).await {
             Ok(res) => {
+                if url == &urls[0] {
+                    headers.push(String::from(format!("Url: {}\n\n", url)));
+                }else {
+                    headers.push(String::from(format!("\nUrl: {}\n\n", url)));
+                }
+
                 valid_urls.push(String::from(format!("{}\n", url)));
 
-                headers.push(String::from(format!("\nUrl: {}\n\n", url)));
 
                 let mut headers_keys: Vec<&str> = Vec::new();
                 let mut headers_values: Vec<&str> = Vec::new();
