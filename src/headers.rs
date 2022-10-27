@@ -10,7 +10,7 @@ pub async fn get_headers(urls: Vec<String>) -> Result<HashMap<&'static str, Stri
 
     progress.set_style(
         ProgressStyle::with_template(
-            "{spinner:.cyan/blue} [{elapsed}] [{bar:60.cyan/blue}] ({pos}/{len}, ETA {eta})",
+            "[{elapsed}] [{bar:60.green}] {pos}/{len}, ETA {eta}",
         )
         .unwrap()
         .progress_chars("=> ")
