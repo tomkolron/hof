@@ -17,6 +17,6 @@ Cargo.lock
 *.tar.gz
 *.tar.gz.zst
 .Srcinfo
-.PKGBUILD
+PKGBUILD
 
 Cargo.lock
