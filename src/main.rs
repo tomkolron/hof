@@ -120,7 +120,7 @@ fn main() {
     let mut headers_file = fs::File::create(format!("{}/headers.txt", path.clone())).expect("Error creating http headers file");
 
     // Get headers
-    let headers = get_headers(all_domains);
+    let headers = get_headers(all_domains, args.timeout.clone());
     headers_file.write(headers.as_ref().unwrap()["headers"].as_bytes()).expect("Error writing to http headers file");
     valid_urls_file.write(headers.as_ref().unwrap()["valid_urls"].as_bytes()).expect("Error writing to valid domains file");
     false_urls_file.write(headers.as_ref().unwrap()["false_urls"].as_bytes()).expect("Error writing to false domains file");
@@ -185,18 +185,20 @@ fn main() {
 // Function to check if user wants to overwrite directory
 fn overwrite_directory(path: String) {
     // Check if user wants to overwrite directory
-    println!("Directory already exist would you like to overwrite it [y, N]");
+    println!("Project directory already exist would you like to overwrite it? [y, N]:");
     let mut user_input = String::new();
     let stdin = io::stdin();
     stdin.read_line(&mut user_input).expect("Problem reading user input");
 
-    if user_input == "y\n" || user_input == "Y\n" {
-        // Overwrite directory
-        println!("overwriting directory ...\n");
-        fs::remove_dir_all(&path).expect("There was a problem overwriting directory");
-        fs::create_dir(&path).expect("There was a problem overwriting directory");
-    }else {
-        quit()
+    // Check if should overwrite directory
+    match user_input.as_str() {
+        "y\n" | "Y\n" | "yes\n" | "Yes\n" => {
+            // Overwrite directory
+            println!("overwriting directory ...\n");
+            fs::remove_dir_all(&path).expect("there was a problem overwriting directory");
+            fs::create_dir(&path).expect("there was a problem overwriting directory");
+        },
+        _ => quit(),
     }
 }
 
