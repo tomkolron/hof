@@ -82,7 +82,6 @@ pub async fn get_headers(urls: Vec<String>, timeout: u64) -> Result<HashMap<&'st
 
 // Function to make requests
 async fn make_req(url: String, timeout: u64) -> Result<header::HeaderMap, Box<dyn std::error::Error>> {
-    println!("{}", timeout);
     let client = Client::new();
     let res = client.get(url).timeout(Duration::from_secs(timeout)).send().await?.headers().clone();
     return Ok(res);
