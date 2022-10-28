@@ -14,8 +14,6 @@ Cargo.lock
 *.pdb
 
 #remove build files
-*.tar.gz
-*.tar.gz.zst
 .Srcinfo
 PKGBUILD
 
