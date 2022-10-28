@@ -110,20 +110,26 @@ fn main() {
         }
     }
 
-    // Create valid urls file
-    let mut valid_urls_file = fs::File::create(format!("{}/valid_urls.txt", path.clone())).expect("Error creating valid urls file");
-
-    // Create false urls file
-    let mut false_urls_file = fs::File::create(format!("{}/false_urls.txt", path.clone())).expect("Error creating false urls file");
-
-    // Create http headers file
-    let mut headers_file = fs::File::create(format!("{}/headers.txt", path.clone())).expect("Error creating http headers file");
 
     // Get headers
     let headers = get_headers(all_domains, args.timeout.clone());
+
+    // Create valid urls file
+    if !headers.as_ref().unwrap()["valid_urls"].is_empty() {
+        let mut valid_urls_file = fs::File::create(format!("{}/valid_urls.txt", path.clone())).expect("Error creating valid urls file");
+        valid_urls_file.write(headers.as_ref().unwrap()["valid_urls"].as_bytes()).expect("Error writing to valid domains file");
+    }
+
+    // Create false urls file
+    if !headers.as_ref().unwrap()["false_urls"].is_empty() {
+        let mut false_urls_file = fs::File::create(format!("{}/false_urls.txt", path.clone())).expect("Error creating false urls file");
+        false_urls_file.write(headers.as_ref().unwrap()["false_urls"].as_bytes()).expect("Error writing to false domains file");
+    }
+
+    // Create http headers file
+    let mut headers_file = fs::File::create(format!("{}/headers.txt", path.clone())).expect("Error creating http headers file");
     headers_file.write(headers.as_ref().unwrap()["headers"].as_bytes()).expect("Error writing to http headers file");
-    valid_urls_file.write(headers.as_ref().unwrap()["valid_urls"].as_bytes()).expect("Error writing to valid domains file");
-    false_urls_file.write(headers.as_ref().unwrap()["false_urls"].as_bytes()).expect("Error writing to false domains file");
+
 
 
     // Print http headers statistics 
