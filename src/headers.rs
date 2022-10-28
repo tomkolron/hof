@@ -5,7 +5,7 @@ use indicatif::{ProgressBar,ProgressStyle};
 
 #[tokio::main]
 
-pub async fn get_headers(urls: Vec<String>) -> Result<HashMap<&'static str, String>, Box<dyn std::error::Error>>{
+pub async fn get_headers(urls: Vec<String>, timeout: u64) -> Result<HashMap<&'static str, String>, Box<dyn std::error::Error>>{
     // Declare progress bar variable
     let progress = ProgressBar::new(urls.len().try_into().unwrap());
 
@@ -32,7 +32,7 @@ pub async fn get_headers(urls: Vec<String>) -> Result<HashMap<&'static str, Stri
     // Itirate through all the urls
     for url in urls.iter() {
         // Check if url is valid
-        match make_req(url.to_string()).await {
+        match make_req(url.to_string(), timeout).await {
             Ok(res) => {
                 // Push title to headers vec
                 if url == &urls[0] {
@@ -81,8 +81,9 @@ pub async fn get_headers(urls: Vec<String>) -> Result<HashMap<&'static str, Stri
 }
 
 // Function to make requests
-async fn make_req(url: String) -> Result<header::HeaderMap, Box<dyn std::error::Error>> {
+async fn make_req(url: String, timeout: u64) -> Result<header::HeaderMap, Box<dyn std::error::Error>> {
+    println!("{}", timeout);
     let client = Client::new();
-    let res = client.get(url).timeout(Duration::from_secs(8)).send().await?.headers().clone();
+    let res = client.get(url).timeout(Duration::from_secs(timeout)).send().await?.headers().clone();
     return Ok(res);
 }
