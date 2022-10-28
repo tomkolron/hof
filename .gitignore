@@ -17,4 +17,6 @@ Cargo.lock
 .Srcinfo
 PKGBUILD
 
+*.tar.gz
+
 Cargo.lock
