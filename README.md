@@ -10,10 +10,11 @@ install with yay: `yay -S hof`
 command arguments:
 
     USAGE:
-        hof --query <QUERY> --path <PATH>
+        hof [OPTIONS] --query <QUERY> --path <PATH>
 
-    OPTIONS
-        -h, --help             Print help information
-        -p, --path <PATH>      a path you want your project to be saved at
-        -q, --query <QUERY>    a query for hackerone
-        -V, --version          Print version information
+    OPTIONS:
+        -h, --help                 Print help information
+        -p, --path <PATH>          A path you want your project to be saved at
+        -q, --query <QUERY>        A query for hackerone
+        -t, --timeout <TIMEOUT>    Set timeout for each request in seconds [default: 8]
+        -V, --version              Print version information
