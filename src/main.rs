@@ -25,7 +25,7 @@ use stybulate::{Table, Style, Cell, Headers};
 
 fn main() {
     // Load config
-    load_config();
+    let mut config = load_config().expect("error loading config");
 
     // Set time to measure how long program runs
     let time = time::Instant::now();

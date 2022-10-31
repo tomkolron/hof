@@ -1,9 +1,10 @@
 use std::fs;
 use std::path::Path;
-use serde_json::json;
+use serde_json::{json, Value};
 use std::io::Write;
+use std::collections::HashMap;
 
-pub fn load_config() {
+pub fn load_config() -> Result<HashMap<&'static str, String>, Box<dyn std::error::Error>> {
     // Create config dir if it doesn't exist
     fs::create_dir_all("/home/tom/.config/hof").unwrap();
 
@@ -28,5 +29,19 @@ pub fn load_config() {
             Err(err) => panic!("Error reading cache file: {}", err),
     };
 
-    // println!("file: {:?}", config_str);
+    let config_json: Value = serde_json::from_str(&config_str).expect("Error decoding config file"); 
+    if config_json["use_vpn"].as_bool().unwrap() == true && config_json["vpn_cmd"].as_str().unwrap() != "" {
+        let vpn_cmd = config_json["vpn_cmd"].as_str().unwrap();
+        let vpn_loop = config_json["vpn_loop"].as_i64().unwrap();
+
+        let mut hash = HashMap::new();
+
+        hash.insert("vpn_cmd", vpn_cmd.to_string());
+        hash.insert("vpn_loop", vpn_loop.to_string());
+        return Ok(hash);
+    }else {
+        let mut hash = HashMap::new();
+        hash.insert("disable", String::from("true"));
+        return Ok(hash);
+    }
 }
