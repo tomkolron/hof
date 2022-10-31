@@ -8,9 +8,9 @@ Hacker one fetcher, fetch hacker one projects and get subdomains and heders for 
 ## Configure vpn loop feature:
 
 In the config file you can specify if
-you want the program to use reconnect your vpn server
+you want the program to reconnect your vpn server
 every couple requests, this can shorten the time that it takes
-to fetch a lot domains, this is the default config file:
+to fetch a large chunk of domains from the same server, this is the default config file:
 ```
 {
   "use_vpn": false,
@@ -21,7 +21,7 @@ to fetch a lot domains, this is the default config file:
 ```
 If you want to use this feature change the "use_vpn" key
 to true. in the "vpn_cmd" key specify a command to restart the vpn
-you are using for open vpn for exaple you would use: "service openvpn restart",
+you are using for example for open vpn you would use: "service openvpn restart",
 in the "vpn_loop" specify in how many requests you want to restart the vpn
 for example the default 25 means every 25 requests the program will restart the vpn.
 
