@@ -5,6 +5,7 @@ mod subdomains;
 mod headers;
 mod cookie_and_token;
 mod cache;
+mod config;
 
 use std::{fs, io, process, time};
 use std::io::Write;
@@ -18,10 +19,14 @@ use subdomains::get_subs;
 use headers::get_headers;
 use cookie_and_token::get_cookie_and_token;
 use cache::{create_cache, check_cache};
+use config::load_config;
 
 use stybulate::{Table, Style, Cell, Headers};
 
 fn main() {
+    // Load config
+    load_config();
+
     // Set time to measure how long program runs
     let time = time::Instant::now();
 
