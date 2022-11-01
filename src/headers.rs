@@ -2,10 +2,33 @@ use reqwest::{Client, header};
 use core::time::Duration;
 use std::collections::HashMap;
 use indicatif::{ProgressBar,ProgressStyle};
+use std::process::Command;
 
 #[tokio::main]
 
-pub async fn get_headers(urls: Vec<String>, timeout: u64) -> Result<HashMap<&'static str, String>, Box<dyn std::error::Error>>{
+pub async fn get_headers(urls: Vec<String>, timeout: u64, config: HashMap<&str, String>) -> Result<HashMap<&'static str, String>, Box<dyn std::error::Error>>{
+    // Get config
+    let vpn_loop = config["vpn_loop"].clone().parse::<u8>().unwrap();
+    let vpn_cmd = &config["vpn_cmd"];
+
+    let mut cmd_index = 0;
+    let mut args: Vec<&str> = Vec::new();
+    let mut cmd:Command = Command::new("ls");
+
+    for i in vpn_cmd.split(' ') {
+        if cmd_index == 0 {
+            cmd = Command::new(i);
+        }else {
+            args.push(i);
+        }
+        cmd_index += 1;
+    }
+
+    cmd.args(&args);
+
+    // Set vpn counter
+    let mut vpn_counter = 0;
+
     // Declare progress bar variable
     let progress = ProgressBar::new(urls.len().try_into().unwrap());
 
@@ -65,9 +88,21 @@ pub async fn get_headers(urls: Vec<String>, timeout: u64) -> Result<HashMap<&'st
                 // Push url to false_urls vec
                 false_urls.push(String::from(format!("{}\n", url)));
             },
+
         }
+        // Checvpn counter
+        if vpn_counter == vpn_loop {
+            println!("restart vpn");
+            // cmd.spawn()?;
+            vpn_counter = 0;
+        }
+
+        // Increment vpn counter
+        vpn_counter += 1;
+
         // Increment the progress bar
         progress.inc(1);
+
     }
     // Finish progress bar
     progress.finish();

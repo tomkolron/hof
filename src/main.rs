@@ -25,7 +25,7 @@ use stybulate::{Table, Style, Cell, Headers};
 
 fn main() {
     // Load config
-    let mut config = load_config().expect("error loading config");
+    let config = load_config().expect("error loading config");
 
     // Set time to measure how long program runs
     let time = time::Instant::now();
@@ -117,7 +117,7 @@ fn main() {
 
 
     // Get headers
-    let headers = get_headers(all_domains, args.timeout.clone());
+    let headers = get_headers(all_domains, args.timeout.clone(), config);
 
     // Create valid urls file
     if !headers.as_ref().unwrap()["valid_urls"].is_empty() {
