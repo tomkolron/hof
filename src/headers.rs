@@ -3,28 +3,28 @@ use core::time::Duration;
 use std::collections::HashMap;
 use indicatif::{ProgressBar,ProgressStyle};
 use std::process::Command;
+use std::{thread, time};
 
 #[tokio::main]
 
 pub async fn get_headers(urls: Vec<String>, timeout: u64, config: HashMap<&str, String>) -> Result<HashMap<&'static str, String>, Box<dyn std::error::Error>>{
     // Get config
     let vpn_loop = config["vpn_loop"].clone().parse::<u8>().unwrap();
+    let vpn_reconnect_delay = time::Duration::from_secs(config["vpn_reconnect_delay"].clone().parse::<u64>().unwrap());
     let vpn_cmd = &config["vpn_cmd"];
 
     let mut cmd_index = 0;
     let mut args: Vec<&str> = Vec::new();
-    let mut cmd:Command = Command::new("ls");
+    let mut command:String = String::from("");
 
     for i in vpn_cmd.split(' ') {
         if cmd_index == 0 {
-            cmd = Command::new(i);
+            command = String::from(i);
         }else {
             args.push(i);
         }
         cmd_index += 1;
     }
-
-    cmd.args(&args);
 
     // Set vpn counter
     let mut vpn_counter = 0;
@@ -35,7 +35,7 @@ pub async fn get_headers(urls: Vec<String>, timeout: u64, config: HashMap<&str, 
     // Style progress bar
     progress.set_style(
         ProgressStyle::with_template(
-            "[{elapsed}] [{bar:60.green}] {pos}/{len}, ETA {eta}",
+            "[{elapsed}] [{bar:60.green}] {pos}/{len}, ETA {eta}{msg}",
         )
         .unwrap()
         .progress_chars("=> ")
@@ -90,10 +90,27 @@ pub async fn get_headers(urls: Vec<String>, timeout: u64, config: HashMap<&str, 
             },
 
         }
-        // Checvpn counter
+        // Check vpn counter
         if vpn_counter == vpn_loop {
-            println!("restart vpn");
-            // cmd.spawn()?;
+            // Check if vpn is enabled in config
+            if config["use_vpn"] == String::from("true") {
+                // Print message to progress bar when reconnecting vpn
+                progress.set_message(", reconnecting vpn");
+
+                // Reconnect vpn
+                Command::new(&command)
+                    .args(&args)
+                    .output()
+                    .expect("failed to reconnect vpn");
+
+                // Sleep specifed amount
+                thread::sleep(vpn_reconnect_delay);
+
+                // Remove message from progress bar
+                progress.set_message("");
+            }
+
+            // Reset vpn counter
             vpn_counter = 0;
         }
 

@@ -18,7 +18,8 @@ pub fn load_config() -> Result<HashMap<&'static str, String>, Box<dyn std::error
         let config_default = json!({
             "use_vpn": false,
             "vpn_cmd": "",
-            "vpn_loop": 25
+            "vpn_loop": 25,
+            "vpn_reconnect_delay": 10
         });
 
         file.write(serde_json::to_string_pretty(&config_default).unwrap().as_bytes()).expect("Couldn't write to cach");
@@ -30,18 +31,17 @@ pub fn load_config() -> Result<HashMap<&'static str, String>, Box<dyn std::error
     };
 
     let config_json: Value = serde_json::from_str(&config_str).expect("Error decoding config file"); 
-    if config_json["use_vpn"].as_bool().unwrap() == true && config_json["vpn_cmd"].as_str().unwrap() != "" {
-        let vpn_cmd = config_json["vpn_cmd"].as_str().unwrap();
-        let vpn_loop = config_json["vpn_loop"].as_i64().unwrap();
 
-        let mut hash = HashMap::new();
+    let use_vpn = config_json["use_vpn"].as_bool().unwrap(); 
+    let vpn_cmd = config_json["vpn_cmd"].as_str().unwrap();
+    let vpn_loop = config_json["vpn_loop"].as_i64().unwrap();
+    let vpn_reconnect_delay = config_json["vpn_reconnect_delay"].as_i64().unwrap();
 
-        hash.insert("vpn_cmd", vpn_cmd.to_string());
-        hash.insert("vpn_loop", vpn_loop.to_string());
-        return Ok(hash);
-    }else {
-        let mut hash = HashMap::new();
-        hash.insert("disable", String::from("true"));
-        return Ok(hash);
-    }
+    let mut hash = HashMap::new();
+
+    hash.insert("use_vpn", use_vpn.to_string());
+    hash.insert("vpn_cmd", vpn_cmd.to_string());
+    hash.insert("vpn_loop", vpn_loop.to_string());
+    hash.insert("vpn_reconnect_delay", vpn_reconnect_delay.to_string());
+    return Ok(hash);
 }
