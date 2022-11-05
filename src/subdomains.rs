@@ -1,4 +1,5 @@
 use std::process::Command;
+use std::io::ErrorKind;
 
 pub fn get_subs(scopes: Vec<String>) -> String {
     // Declare empty subdomains vector
@@ -28,7 +29,10 @@ pub fn get_subs(scopes: Vec<String>) -> String {
                 // Push output to subdomains vec
                 subdomains.push(output_final);
             },
-            Err(error) => panic!("Error getting subdomain: {:?}", error),
+            Err(error) => match error.kind() {
+                ErrorKind::NotFound => panic!("You need to install findomain to use this app, instruction here: https://github.com/Findomain/Findomain"),
+                other_error => panic!("Error getting subdomain: {:?}", other_error),
+            },
         }
     }
 
