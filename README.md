@@ -5,7 +5,11 @@ Hacker one fetcher, fetch hacker one projects and get subdomains and heders for 
 
 `cargo install hof`
 
-## Configure vpn loop feature:
+## Dependencies
+
+findomain: https://github.com/Findomain/Findomain
+
+## Configure vpn switching feature:
 
 In the config file you can specify if
 you want the program to reconnect your vpn server
