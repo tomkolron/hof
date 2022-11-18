@@ -13,7 +13,7 @@ findomain: https://github.com/Findomain/Findomain
 
 In the config file you can specify if
 you want the program to reconnect your vpn server
-every couple requests, this can shorten the time that it takes
+every few requests, this can shorten the time that it takes
 to fetch a large chunk of domains from the same server, this is the default config file:
 ```
 {
@@ -39,9 +39,13 @@ USAGE:
     hof [OPTIONS] --query <QUERY> --path <PATH>
 
 OPTIONS:
-    -h, --help                 Print help information
-    -p, --path <PATH>          A path you want your project to be saved at
-    -q, --query <QUERY>        A query for hackerone
-    -t, --timeout <TIMEOUT>    Set timeout for each request in seconds [default: 8]
-    -V, --version              Print version information
+    -h, --headers <HEADERS>          Tell the program wether to get http headers for all domains or
+                                     not [default: true]
+        --help                       Print help information
+    -p, --path <PATH>                A path you want your project to be saved at
+    -q, --query <QUERY>              A query for hackerone
+    -s, --subdomains <SUBDOMAINS>    Tell the program wether to find subdomains for scopes with
+                                     wildcards or not [default: true]
+    -t, --timeout <TIMEOUT>          Set timeout for each request in seconds [default: 8]
+    -V, --version                    Print version information
 ```
