@@ -9,7 +9,6 @@ mod config;
 
 use std::{fs, io, process, time};
 use std::io::Write;
-use clap::Parser;
 use std::collections::HashMap;
 
 use args::FbbArgs;
@@ -22,16 +21,34 @@ use cache::{create_cache, check_cache};
 use config::load_config;
 
 use stybulate::{Table, Style, Cell, Headers};
+use clap::Parser;
+use directories::ProjectDirs;
 
 fn main() {
+    // Get cli argumets
+    let args = FbbArgs::parse();
+
+    // Loading app data(createing dirs if needed getting cache and loading config)
+    println!("Loading app data ...\n");
+
+    // Generate project dirs(adapts to os)
+    let proj_dirs = ProjectDirs::from("", "tomkolron", "hof").expect("couldn't get app dirs");
+
+    // Create cache directory if it doesn't exist
+    fs::create_dir_all(&proj_dirs.cache_dir()).expect("Couldn't create cache directory");
+
+    // Crate config dir if it doesn't exist
+    fs::create_dir_all(&proj_dirs.config_dir()).expect("Couldn't create config directory");
+
+    let cache_dir = proj_dirs.cache_dir().to_str().unwrap();
+
+    let config_dir = proj_dirs.config_dir().to_str().unwrap();
+
     // Load config
-    let config = load_config().expect("error loading config");
+    let config = load_config(config_dir).expect("error loading config");
 
     // Set time to measure how long program runs
     let time = time::Instant::now();
-
-    // Get cli argumets
-    let args = FbbArgs::parse();
 
     // Set path
     let path = format!("{}/{}", args.path.clone(), args.query.clone());
@@ -58,14 +75,14 @@ fn main() {
     let mut subs_scopes = Vec::new();
 
     // Check if cache is expired
-    let check_cache = check_cache();
+    let check_cache = check_cache(cache_dir);
     let cookie_and_token: HashMap<&str, String>;
 
     if check_cache.as_ref().unwrap().contains_key("none") {
         // Get cookie and csrf token
         cookie_and_token = get_cookie_and_token().unwrap();
         // Create cache for csrf token and cookie
-        create_cache(&cookie_and_token).expect("Couldn't create cache");
+        create_cache(&cookie_and_token, cache_dir).expect("Couldn't create cache");
     }else {
         // Get cookie and csrf token from cache
         cookie_and_token = check_cache.unwrap();

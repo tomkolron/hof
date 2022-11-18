@@ -4,13 +4,10 @@ use serde_json::{json, Value};
 use std::io::Write;
 use std::collections::HashMap;
 
-pub fn load_config() -> Result<HashMap<&'static str, String>, Box<dyn std::error::Error>> {
-    // Create config dir if it doesn't exist
-    fs::create_dir_all("/home/tom/.config/hof").unwrap();
-
+pub fn load_config(config_path: &str) -> Result<HashMap<&'static str, String>, Box<dyn std::error::Error>> {
     // Create config file if it doesn't exist
-    if Path::new("/home/tom/.config/hof/config.txt").exists() == false {
-        let mut file = match fs::File::create("/home/tom/.config/hof/config.txt") {
+    if Path::new(format!("{}/config.json", config_path).as_str()).exists() == false {
+        let mut file = match fs::File::create(format!("{}/config.json", config_path)) {
             Ok(file) => file,
             Err(err) => panic!("Error create config file because: {}", err),
         };
@@ -22,10 +19,10 @@ pub fn load_config() -> Result<HashMap<&'static str, String>, Box<dyn std::error
             "vpn_reconnect_delay": 10
         });
 
-        file.write(serde_json::to_string_pretty(&config_default).unwrap().as_bytes()).expect("Couldn't write to cach");
+        file.write(serde_json::to_string_pretty(&config_default).unwrap().as_bytes()).expect("Couldn't write to config file");
     }
 
-    let config_str = match fs::read_to_string("/home/tom/.config/hof/config.txt") {
+    let config_str = match fs::read_to_string(format!("{}/config.json", config_path)) {
             Ok(file) => file,
             Err(err) => panic!("Error reading cache file: {}", err),
     };
@@ -43,5 +40,6 @@ pub fn load_config() -> Result<HashMap<&'static str, String>, Box<dyn std::error
     hash.insert("vpn_cmd", vpn_cmd.to_string());
     hash.insert("vpn_loop", vpn_loop.to_string());
     hash.insert("vpn_reconnect_delay", vpn_reconnect_delay.to_string());
+
     return Ok(hash);
 }

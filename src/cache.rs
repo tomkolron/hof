@@ -4,12 +4,9 @@ use chrono::{Local, TimeZone};
 use std::collections::HashMap;
 use serde_json::{json, Value};
 
-pub fn create_cache(hashmap: &HashMap<&str, String>) -> Result<(), Box<dyn std::error::Error>> {
-    // Create cache directory if it doesn't exist
-    fs::create_dir_all("/home/tom/.cache/hof/").unwrap();
-
+pub fn create_cache(hashmap: &HashMap<&str, String>, cache_path: &str) -> Result<(), Box<dyn std::error::Error>> {
     // Create cache file
-    let mut cache_file = match fs::File::create("/home/tom/.cache/hof/cache.txt") {
+    let mut cache_file = match fs::File::create(format!("{}/cache", cache_path)) {
         Ok(file) => file,
         Err(error) => panic!("There was an error creating cache file: {}", error),
     };
@@ -28,9 +25,9 @@ pub fn create_cache(hashmap: &HashMap<&str, String>) -> Result<(), Box<dyn std::
     return Ok(());
 }
 
-pub fn check_cache() -> Result<HashMap<&'static str, String>, Box<dyn std::error::Error>> {
+pub fn check_cache(cache_path: &str) -> Result<HashMap<&'static str, String>, Box<dyn std::error::Error>> {
     // Read from the cache file
-    let cache_str = match fs::read_to_string("/home/tom/.cache/hof/cache.txt") {
+    let cache_str = match fs::read_to_string(format!("{}/cache", cache_path)) {
         Ok(file) => file,
         Err(error) => match error.kind() {
             std::io::ErrorKind::NotFound => {
