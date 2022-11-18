@@ -51,10 +51,10 @@ fn main() {
     // Create scopes file
     let mut scopes_file = fs::File::create(format!("{}/scopes.txt", path.clone())).expect("Error creating scopes file");
 
-    // Filter scopes
+    // Filtered scopes
     let mut filtered_scopes = Vec::new();
 
-    // Subs scopes
+    // Scopes that contain wildcards
     let mut subs_scopes = Vec::new();
 
     // Check if cache is expired
@@ -94,14 +94,15 @@ fn main() {
     // Set all_domains
     let mut all_domains: Vec<String> = Vec::new();
     for scope in filtered_scopes {
-        if scope.contains("https://") {
+        if scope.contains("https://") || scope.contains("http://") {
             all_domains.push(scope);
         }else {
             all_domains.push(String::from(format!("https://{}", scope)));
         }
     }
 
-    if subs_scopes.len() > 0 {
+    // Check if there are any scopes with wildcards and if subdomains are enabled
+    if subs_scopes.len() > 0 && args.subdomains.clone() == "true" {
         // Create subdomains file
         let mut subs_file = fs::File::create(format!("{}/subdomains.txt", path.clone())).expect("Error creating subdomains file");
         
@@ -116,35 +117,38 @@ fn main() {
     }
 
 
-    // Get headers
-    let headers = get_headers(all_domains, args.timeout.clone(), config);
+    // Check if headers are enabled
+    if args.headers.clone() == "true" {
+        // Get headers
+        let headers = get_headers(all_domains, args.timeout.clone(), config);
 
-    // Create valid urls file
-    if !headers.as_ref().unwrap()["valid_urls"].is_empty() {
-        let mut valid_urls_file = fs::File::create(format!("{}/valid_urls.txt", path.clone())).expect("Error creating valid urls file");
-        valid_urls_file.write(headers.as_ref().unwrap()["valid_urls"].as_bytes()).expect("Error writing to valid domains file");
+        // Create valid urls file
+        if !headers.as_ref().unwrap()["valid_urls"].is_empty() {
+            let mut valid_urls_file = fs::File::create(format!("{}/valid_urls.txt", path.clone())).expect("Error creating valid urls file");
+            valid_urls_file.write(headers.as_ref().unwrap()["valid_urls"].as_bytes()).expect("Error writing to valid domains file");
+        }
+
+        // Create false urls file
+        if !headers.as_ref().unwrap()["false_urls"].is_empty() {
+            let mut false_urls_file = fs::File::create(format!("{}/false_urls.txt", path.clone())).expect("Error creating false urls file");
+            false_urls_file.write(headers.as_ref().unwrap()["false_urls"].as_bytes()).expect("Error writing to false domains file");
+        }
+
+        // Create http headers file
+        let mut headers_file = fs::File::create(format!("{}/headers.txt", path.clone())).expect("Error creating http headers file");
+        headers_file.write(headers.as_ref().unwrap()["headers"].as_bytes()).expect("Error writing to http headers file");
+
+
+
+        // Print http headers statistics 
+        let mut valid_urls_count: Vec<&str> = headers.as_ref().unwrap()["valid_urls"].split("\n").collect();
+        valid_urls_count.pop();
+
+        let mut false_urls_count: Vec<&str> = headers.as_ref().unwrap()["false_urls"].split("\n").collect();
+        false_urls_count.pop();
+
+        println!("\nFound {} valid urls and {} false urls.\n", valid_urls_count.len(), false_urls_count.len());
     }
-
-    // Create false urls file
-    if !headers.as_ref().unwrap()["false_urls"].is_empty() {
-        let mut false_urls_file = fs::File::create(format!("{}/false_urls.txt", path.clone())).expect("Error creating false urls file");
-        false_urls_file.write(headers.as_ref().unwrap()["false_urls"].as_bytes()).expect("Error writing to false domains file");
-    }
-
-    // Create http headers file
-    let mut headers_file = fs::File::create(format!("{}/headers.txt", path.clone())).expect("Error creating http headers file");
-    headers_file.write(headers.as_ref().unwrap()["headers"].as_bytes()).expect("Error writing to http headers file");
-
-
-
-    // Print http headers statistics 
-    let mut valid_urls_count: Vec<&str> = headers.as_ref().unwrap()["valid_urls"].split("\n").collect();
-    valid_urls_count.pop();
-
-    let mut false_urls_count: Vec<&str> = headers.as_ref().unwrap()["false_urls"].split("\n").collect();
-    false_urls_count.pop();
-
-    println!("\nFound {} valid urls and {} false urls.\n", valid_urls_count.len(), false_urls_count.len());
 
     // Get bounties
     let bounties = get_bounties(args.query.clone(), cookie_and_token["cookie"].clone(), cookie_and_token["csrf"].clone());
