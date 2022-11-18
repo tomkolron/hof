@@ -16,7 +16,7 @@ pub struct FbbArgs {
     /// Tell the program wether to find subdomains for scopes with wildcards or not
     #[clap(short, long, value_parser, default_value = "true")]
     pub subdomains: String,
-    /// Tell the program wether to find http headers for all domains or not
+    /// Tell the program wether to get http headers for all domains or not
     #[clap(short, long, value_parser, default_value = "true")]
     pub headers: String,
 }
