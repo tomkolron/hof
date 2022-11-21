@@ -2,7 +2,6 @@ use reqwest::{Client, header};
 use serde_json;
 
 #[tokio::main]
-
 pub async fn get_scopes(search: String, cookie: String, csrf: String) -> Result<Vec<String>, Box<dyn std::error::Error>> {
     // Set headerMap
     let mut headers = header::HeaderMap::new();
