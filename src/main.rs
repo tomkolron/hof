@@ -26,16 +26,20 @@ use directories::ProjectDirs;
 use colored::{Colorize, ColoredString};
 
 fn main() {
+    // Get cli argumets
+    let args = FbbArgs::parse();
+
     // Get creates.io package info
     let package_name: &'static str = env!("CARGO_PKG_NAME");
     let package_ver: ColoredString = env!("CARGO_PKG_VERSION").green();
     let package_author: ColoredString = env!("CARGO_PKG_AUTHORS").blue();
+    let package_repo: ColoredString = env!("CARGO_PKG_REPOSITORY").blue();
 
     // Print package info
     println!("{} {} by {}\n",package_name, package_ver, package_author);
 
-    // Get cli argumets
-    let args = FbbArgs::parse();
+    // Print github of package
+    println!("github: {}\n", package_repo);
 
     // Loading app data(createing dirs if needed getting cache and loading config)
     println!("Loading app data ...\n");
