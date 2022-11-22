@@ -23,8 +23,17 @@ use config::load_config;
 use stybulate::{Table, Style, Cell, Headers};
 use clap::Parser;
 use directories::ProjectDirs;
+use colored::{Colorize, ColoredString};
 
 fn main() {
+    // Get creates.io package info
+    let package_name: &'static str = env!("CARGO_PKG_NAME");
+    let package_ver: ColoredString = env!("CARGO_PKG_VERSION").green();
+    let package_author: ColoredString = env!("CARGO_PKG_AUTHORS").blue();
+
+    // Print package info
+    println!("{} {} by {}\n",package_name, package_ver, package_author);
+
     // Get cli argumets
     let args = FbbArgs::parse();
 
