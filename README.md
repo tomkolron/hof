@@ -35,17 +35,16 @@ wait after reconnecting the vpn.
 ## Command arguments:
 
 ```
-USAGE:
-    hof [OPTIONS] --query <QUERY> --path <PATH>
+Hacker one fetcher, fetch hacker one projects and get subdomains and heders for all scope domains.
 
-OPTIONS:
-    -h, --headers <HEADERS>          Tell the program wether to get http headers for all domains or
-                                     not [default: true]
-        --help                       Print help information
-    -p, --path <PATH>                A path you want your project to be saved at
-    -q, --query <QUERY>              A query for hackerone
-    -s, --subdomains <SUBDOMAINS>    Tell the program wether to find subdomains for scopes with
-                                     wildcards or not [default: true]
-    -t, --timeout <TIMEOUT>          Set timeout for each request in seconds [default: 8]
-    -V, --version                    Print version information
+Usage: hof [OPTIONS] --query <QUERY> --path <PATH>
+
+Options:
+  -q, --query <QUERY>      A query for hackerone
+  -p, --path <PATH>        A path you want your project to be saved at
+  -t, --timeout <TIMEOUT>  Set timeout for each request in seconds [default: 8]
+      --no-subdomains      Tell the program not to find subdomains for scopes
+      --no-headers         Tell the program not to get http headers for domains
+  -h, --help               Print help information
+  -V, --version            Print version information
 ```
