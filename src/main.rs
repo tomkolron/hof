@@ -132,7 +132,7 @@ fn main() {
     }
 
     // Check if there are any scopes with wildcards and if subdomains are enabled
-    if subs_scopes.len() > 0 && args.subdomains.clone() == "true" {
+    if subs_scopes.len() > 0 && args.no_subdomains.clone() == false {
         // Create subdomains file
         let mut subs_file = fs::File::create(format!("{}/subdomains.txt", path.clone())).expect("Error creating subdomains file");
         
@@ -148,7 +148,7 @@ fn main() {
 
 
     // Check if headers are enabled
-    if args.headers.clone() == "true" {
+    if args.no_headers.clone() == false {
         // Get headers
         let headers = get_headers(all_domains, args.timeout.clone(), config);
 

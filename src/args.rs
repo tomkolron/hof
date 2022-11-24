@@ -13,10 +13,10 @@ pub struct FbbArgs {
     /// Set timeout for each request in seconds
     #[clap(short, long, value_parser, default_value_t = 8)]
     pub timeout: u64,
-    /// Tell the program wether to find subdomains for scopes with wildcards or not
-    #[clap(short, long, value_parser, default_value = "true")]
-    pub subdomains: String,
-    /// Tell the program wether to get http headers for all domains or not
-    #[clap(short = 'H', long, value_parser, default_value = "true")]
-    pub headers: String,
+    /// Tell the program not to find subdomains for scopes
+    #[clap(long)]
+    pub no_subdomains: bool,
+    /// Tell the program not to get http headers for domains
+    #[clap(long)]
+    pub no_headers: bool,
 }
