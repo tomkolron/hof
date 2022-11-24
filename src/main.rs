@@ -224,7 +224,7 @@ fn main() {
     };
 
     // Print time it took to run
-    println!("took {}{}{} to run.", hours_string, minutes_string, seconds_string);
+    println!("App took {}{}{} to run.", hours_string, minutes_string, seconds_string);
 }
 
 // Function to check if user wants to overwrite directory
